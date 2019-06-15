@@ -12,12 +12,10 @@ module.exports = {
             where: {
                 noteArchived: false
             },
-            defaults: {
-                noteContent: ""
-            },
             order: [
                 ["noteId", "DESC"]
-            ]
+            ],
+            raw: true
         }).then(function (data) {
             if (data) {
                 output.apiOutput(res, { noteList: data });
@@ -36,8 +34,9 @@ module.exports = {
             });
     },
     updateNote (req, res) {
-        if (req.body.noteContent) {
+        if (req.body.noteId && (req.body.noteContent || req.body.noteTitle)) {
             Note.update({
+                noteTitle: req.body.noteTitle,
                 noteContent: req.body.noteContent,
                 noteUpdatedDate: Sequelize.literal("CURRENT_TIMESTAMP")
             }, {
@@ -48,7 +47,7 @@ module.exports = {
                 output.apiOutput(res, data);
             });
         } else {
-            output.error(res, "Please provide Note Content.");
+            output.error(res, "Please provide Note Content or Note Title.");
         }
     },
     archiveNote (req, res) {
