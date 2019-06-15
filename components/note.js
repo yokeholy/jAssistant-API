@@ -7,8 +7,8 @@ const Sequelize = require("sequelize");
 const {note: Note} = require("../models");
 
 module.exports = {
-    getNote (req, res) {
-        Note.findOrCreate({
+    getNotes (req, res) {
+        Note.findAll({
             where: {
                 noteArchived: false
             },
@@ -20,11 +20,20 @@ module.exports = {
             ]
         }).then(function (data) {
             if (data) {
-                output.apiOutput(res, {note: data[0].noteContent});
+                output.apiOutput(res, { noteList: data });
             } else {
                 output.apiOutput(res, []);
             }
         });
+    },
+    createNote (req, res) {
+        Note.create({
+            noteArchived: false,
+            noteContent: ""
+        })
+            .then(function () {
+                output.apiOutput(res, true);
+            });
     },
     updateNote (req, res) {
         if (req.body.noteContent) {
@@ -33,7 +42,7 @@ module.exports = {
                 noteUpdatedDate: Sequelize.literal("CURRENT_TIMESTAMP")
             }, {
                 where: {
-                    noteArchived: false
+                    noteId: req.body.noteId
                 }
             }).then(function (data) {
                 output.apiOutput(res, data);
@@ -48,12 +57,8 @@ module.exports = {
             noteUpdatedDate: Sequelize.literal("CURRENT_TIMESTAMP")
         }, {
             where: {
-                noteArchived: false
+                noteId: req.body.noteId
             }
-        });
-        Note.create({
-            noteArchived: false,
-            noteContent: ""
         })
             .then(function () {
                 output.apiOutput(res, true);
