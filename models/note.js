@@ -6,6 +6,11 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true
         },
+        noteTitle: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: ""
+        },
         noteContent: {
             type: DataTypes.TEXT,
             allowNull: false
