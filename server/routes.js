@@ -15,7 +15,8 @@ module.exports = function (server) {
         .post("/todo/deleteTodo", todo.deleteTodo);
     // Note
     server
-        .get("/note/getNote", note.getNote)
+        .get("/note/getNotes", note.getNotes)
+        .post("/note/createNote", note.createNote)
         .post("/note/updateNote", note.updateNote)
         .post("/note/archiveNote", note.archiveNote);
     // Routine
