@@ -1,0 +1,9 @@
+{
+    "username": "db_username",
+    "password": "db_password",
+    "database": "db_database",
+    "host": "localhost",
+    "dialect": "mysql",
+    "port": 3306
+}
+
