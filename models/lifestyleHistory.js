@@ -6,8 +6,8 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true,
             defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
         },
-        lifestyleType: {
-            type: DataTypes.STRING(20),
+        lifestyleId: {
+            type: DataTypes.INTEGER(10),
             allowNull: false
         }
     }, {
