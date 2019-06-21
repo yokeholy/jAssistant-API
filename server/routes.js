@@ -34,5 +34,6 @@ module.exports = function (server) {
     // Settings
     server
         .get("/settings/getAllSettings", settings.getAllSettings)
-        .post("/settings/saveLifestyleSetting", settings.saveLifestyleSetting);
+        .post("/settings/saveLifestyleSetting", settings.saveLifestyleSetting)
+        .post("/settings/deleteLifestyleSetting", settings.deleteLifestyleSetting);
 };

@@ -11,7 +11,10 @@ module.exports = {
         let lifestyles = {};
         sequelizeInstance.transaction(t =>
             Lifestyle.findAll({
-                attributes: ["lifestyleId", "lifestyleName", "lifestyleDailyValue"],
+                attributes: ["lifestyleId", "lifestyleName", "lifestyleCaption", "lifestyleDailyValue", "lifestyleIconName", "lifestyleColorName"],
+                where: {
+                    lifestyleStatus: true
+                },
                 transaction: t,
                 raw: true
             })
@@ -20,6 +23,7 @@ module.exports = {
                     return LifestyleHistory.findAll({
                         group: ["lifestyleId"],
                         attributes: ["lifestyleId", [Sequelize.fn("count", Sequelize.col("lifestyleId")), "todayValue"]],
+                        where: Sequelize.literal("DATE(lifestyleHistoryDate) = DATE(NOW())"),
                         transaction: t,
                         raw: true
                     });

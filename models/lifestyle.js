@@ -6,9 +6,29 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true
         },
+        lifestyleStatus: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
+        },
         lifestyleName: {
             type: DataTypes.TEXT,
             allowNull: false
+        },
+        lifestyleCaption: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: ""
+        },
+        lifestyleIconName: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: "success"
+        },
+        lifestyleColorName: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: "tint"
         },
         lifestyleDailyValue: {
             type: DataTypes.INTEGER(2),
