@@ -4,6 +4,7 @@ const todo = require("../components/todo");
 const note = require("../components/note");
 const routine = require("../components/routine");
 const lifestyle = require("../components/lifestyle");
+const settings = require("../components/settings");
 
 module.exports = function (server) {
     // TodoList
@@ -30,4 +31,9 @@ module.exports = function (server) {
     server
         .get("/lifestyle/getLifestyle", lifestyle.getLifestyle)
         .post("/lifestyle/upLifestyle", lifestyle.upLifestyle);
+    // Settings
+    server
+        .get("/settings/getAllSettings", settings.getAllSettings)
+        .post("/settings/saveLifestyleSetting", settings.saveLifestyleSetting)
+        .post("/settings/deleteLifestyleSetting", settings.deleteLifestyleSetting);
 };

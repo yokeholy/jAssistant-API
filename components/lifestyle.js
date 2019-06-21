@@ -1,61 +1,55 @@
 "use strict";
 
 const output = require("../services/output");
-const log = require("pino")();
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../models").database;
 
-const {lifestyle: Lifestyle, lifestyleHistory: LifestyleHistory, configuration: Configuration} = require("../models");
+const {lifestyle: Lifestyle, lifestyleHistory: LifestyleHistory} = require("../models");
 
 module.exports = {
     getLifestyle (req, res) {
-        let lifestyleData;
+        let lifestyles = {};
         sequelizeInstance.transaction(t =>
-            Lifestyle.findOrCreate({
-                attributes: ["water", "standing", "workout"],
+            Lifestyle.findAll({
+                attributes: ["lifestyleId", "lifestyleName", "lifestyleCaption", "lifestyleDailyValue", "lifestyleIconName", "lifestyleColorName"],
                 where: {
-                    lifestyleDate: Sequelize.literal("lifestyleDate = CURDATE()")
+                    lifestyleStatus: true
                 },
-                defaults: {
-                    lifestyleDate: Sequelize.literal("CURDATE()")
-                },
-                transaction: t
+                transaction: t,
+                raw: true
             })
                 .then(function (data) {
-                    lifestyleData = data[0];
-                    return Configuration.findAll({transaction: t});
+                    lifestyles = data;
+                    return LifestyleHistory.findAll({
+                        group: ["lifestyleId"],
+                        attributes: ["lifestyleId", [Sequelize.fn("count", Sequelize.col("lifestyleId")), "todayValue"]],
+                        where: Sequelize.literal("DATE(lifestyleHistoryDate) = DATE(NOW())"),
+                        transaction: t,
+                        raw: true
+                    });
                 })
         )
             .then(function (data) {
-                let lifestyleConfig = {};
-                for (let item = 0; item < data.length; item++) {
-                    lifestyleConfig[data[item].configurationItem] = parseInt(data[item].configurationValue, 10);
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < lifestyles.length; j++) {
+                        if (lifestyles[j].lifestyleId === data[i].lifestyleId) {
+                            lifestyles[j].todayValue = data[i].todayValue;
+                        }
+                    }
                 }
-                output.apiOutput(res, {lifestyles: lifestyleData, lifestyleConfig});
+                output.apiOutput(res, { lifestyles });
             });
     },
     upLifestyle (req, res) {
-        if (req.body.type) {
-            sequelizeInstance.transaction(t =>
-                Lifestyle.update({
-                    water: req.body.type === "water" ? Sequelize.literal("water + 1") : Sequelize.literal("water"),
-                    standing: req.body.type === "standing" ? Sequelize.literal("standing + 1") : Sequelize.literal("standing"),
-                    workout: req.body.type === "workout" ? Sequelize.literal("workout + 1") : Sequelize.literal("workout")
-                }, {
-                    where: {
-                        lifestyleDate: Sequelize.literal("lifestyleDate = CURDATE()")
-                    },
-                    transaction: t
-                })
-                    .then(() =>
-                        LifestyleHistory.create({lifestyleType: req.body.type})
-                    )
-            )
+        if (req.body.lifestyleId) {
+            LifestyleHistory.create({
+                lifestyleId: req.body.lifestyleId
+            })
                 .then(function (data) {
                     output.apiOutput(res, data);
                 });
         } else {
-            output.error(res, "Please provide Lifestyle Type.");
+            output.error(res, "Please provide Lifestyle Id.");
         }
     }
 };

@@ -1,25 +1,48 @@
 module.exports = function (sequelize, DataTypes) {
     const lifestyle = sequelize.define("lifestyle", {
-        lifestyleDate: {
-            type: DataTypes.DATEONLY,
+        lifestyleId: {
+            type: DataTypes.INTEGER(10),
             allowNull: false,
             primaryKey: true,
-            defaultValue: DataTypes.NOW
+            autoIncrement: true
         },
-        water: {
+        lifestyleStatus: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
+        },
+        lifestyleName: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        lifestyleCaption: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: ""
+        },
+        lifestyleIconName: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: "success"
+        },
+        lifestyleColorName: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+            defaultValue: "tint"
+        },
+        lifestyleDailyValue: {
             type: DataTypes.INTEGER(2),
             allowNull: false,
-            defaultValue: 0
+            defaultValue: 1
         },
-        standing: {
-            type: DataTypes.INTEGER(2),
+        lifestyleCreatedDate: {
+            type: DataTypes.DATE,
             allowNull: false,
-            defaultValue: 0
+            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
         },
-        workout: {
-            type: DataTypes.INTEGER(2),
-            allowNull: false,
-            defaultValue: 0
+        lifestyleUpdatedDate: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         tableName: "lifestyle",
