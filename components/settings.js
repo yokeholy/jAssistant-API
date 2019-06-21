@@ -3,26 +3,31 @@
 const output = require("../services/output");
 const Sequelize = require("sequelize");
 
+const Content = require("../config/content");
 const {lifestyle: Lifestyle} = require("../models");
 
 module.exports = {
     getAllSettings (req, res) {
-        Lifestyle.findAll({ raw: true })
+        let lifestyleSettings;
+        let contentSettings = Content;
+        Lifestyle.findAll({
+            where: {
+                lifestyleStatus: true
+            },
+            raw: true
+        })
             .then(function (data) {
-                let lifestyleSettings = data;
-                output.apiOutput(res, {lifestyleSettings});
+                lifestyleSettings = data;
+                output.apiOutput(res, {lifestyleSettings, contentSettings});
             });
     },
     saveLifestyleSetting (req, res) {
         if (req.body) {
             const setting = req.body;
             if (setting.lifestyleId) {
+                req.body.lifestyleUpdatedDate = Sequelize.literal("NOW()");
                 // This is an exiting lifestyle item, update the setting instead of creating a new one
-                Lifestyle.update({
-                    lifestyleName: setting.lifestyleName,
-                    lifestyleDailyValue: setting.lifestyleDailyValue,
-                    lifestyleUpdatedDate: Sequelize.literal("NOW()")
-                }, {
+                Lifestyle.update(req.body, {
                     where: {
                         lifestyleId: setting.lifestyleId
                     }
@@ -40,6 +45,22 @@ module.exports = {
                         output.apiOutput(res, data);
                     });
             }
+        } else {
+            output.error(res, "Please provide Lifestyle Settings data.");
+        }
+    },
+    deleteLifestyleSetting (req, res) {
+        if (req.body.lifestyleId) {
+            Lifestyle.update({
+                lifestyleStatus: false
+            }, {
+                where: {
+                    lifestyleId: req.body.lifestyleId
+                }
+            })
+                .then(() => {
+                    output.apiOutput(res, true);
+                });
         } else {
             output.error(res, "Please provide Lifestyle Settings data.");
         }
