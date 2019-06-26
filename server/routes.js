@@ -1,5 +1,6 @@
 "use strict";
 
+const account = require("../components/account");
 const todo = require("../components/todo");
 const note = require("../components/note");
 const routine = require("../components/routine");
@@ -7,6 +8,9 @@ const lifestyle = require("../components/lifestyle");
 const settings = require("../components/settings");
 
 module.exports = function (server) {
+    // Account
+    server
+        .post("/account/login", account.login);
     // TodoList
     server
         .get("/todo/getTodoList", todo.getTodoList)
