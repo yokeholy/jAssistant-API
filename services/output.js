@@ -15,30 +15,14 @@ module.exports = {
         }).end();
     },
 
-    error (res, message) {
-        let errorMessage = `Error: ${message}`;
-        log.error(`API ERROR - Error message sent to user: "${errorMessage}"`);
-        res.status(400)
-            .json({
-                metadata: {
-                    status: false,
-                    version: currentVersion,
-                    message: errorMessage
-                },
-                data: null
-            })
-            .end();
-    },
-
     authError (res, message) {
-        let errorMessage = `Authentication Error: ${message}`;
-        log.error(`AUTHENTICATION ERROR - Error message sent to user: "${errorMessage}"`);
+        log.error(`AUTHENTICATION ERROR: ${message}`);
         res.status(401)
             .json({
                 metadata: {
                     status: false,
                     version: currentVersion,
-                    message: errorMessage
+                    message
                 },
                 data: null
             })
@@ -46,15 +30,14 @@ module.exports = {
     },
 
     systemError (res, message) {
-        let errorMessage = `System Error: ${message}`;
-        log.error(`SYSTEM ERROR - Error message sent to user: "${errorMessage}"`);
+        log.error(`SYSTEM ERROR: ${message}`);
         // Send Status 500 and end the response.
         res.status(500)
             .json({
                 metadata: {
                     status: false,
                     version: currentVersion,
-                    error: errorMessage
+                    message
                 },
                 data: null
             })
