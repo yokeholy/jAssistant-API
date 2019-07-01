@@ -1,10 +1,8 @@
 "use strict";
 var md5 = require("md5");
 var bcrypt = require("bcrypt");
-const log = require("pino")();
 
 const output = require("../services/output");
-const Sequelize = require("sequelize");
 const sequelizeInstance = require("../models").database;
 
 const {user: User, loginSession: LoginSession} = require("../models");
