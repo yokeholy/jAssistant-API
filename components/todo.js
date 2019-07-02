@@ -3,11 +3,12 @@
 const output = require("../services/output");
 const Sequelize = require("sequelize");
 
-const {todo: Todo} = require("../models");
+const {todo: Todo, comment: Comment} = require("../models");
 
 module.exports = {
     getTodoList (req, res) {
         Todo.findAll({
+            attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Comment.commentId")), "commentCount"]],
             where: {
                 [Sequelize.Op.or]: [
                     {todoStatus: false},
@@ -15,6 +16,16 @@ module.exports = {
                     Sequelize.literal("DATE(todoCreatedDate) = CURDATE()")
                 ]
             },
+            include: [{
+                model: Comment,
+                attributes: [],
+                where: {
+                    commentType: 1,
+                    commentDeleted: 0
+                },
+                required: false
+            }],
+            group: ["todo.todoId"],
             raw: true
         }).then(data => {
             // Loop through the list to separate root todo items from sub todo items

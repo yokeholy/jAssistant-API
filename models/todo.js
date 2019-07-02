@@ -32,5 +32,10 @@ module.exports = function (sequelize, DataTypes) {
         tableName: "todo",
         timestamps: false
     });
+    todo.associate = function (models) {
+        todo.hasOne(models.comment, {
+            foreignKey: "commentEntityId"
+        });
+    };
     return todo;
 };
