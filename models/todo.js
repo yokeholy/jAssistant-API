@@ -23,6 +23,10 @@ module.exports = function (sequelize, DataTypes) {
         todoUpdatedDate: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        parentTodoId: {
+            type: DataTypes.INTEGER(10),
+            allowNull: true
         }
     }, {
         tableName: "todo",
