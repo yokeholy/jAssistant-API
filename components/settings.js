@@ -8,7 +8,6 @@ const {lifestyle: Lifestyle} = require("../models");
 
 module.exports = {
     getAllSettings (req, res) {
-        let lifestyleSettings;
         let contentSettings = Content;
         Lifestyle.findAll({
             where: {
@@ -16,10 +15,9 @@ module.exports = {
             },
             raw: true
         })
-            .then(function (data) {
-                lifestyleSettings = data;
-                output.apiOutput(res, {lifestyleSettings, contentSettings});
-            });
+            .then(data =>
+                output.apiOutput(res, {lifestyleSettings: data, contentSettings})
+            );
     },
     saveLifestyleSetting (req, res) {
         if (req.body) {
@@ -32,16 +30,16 @@ module.exports = {
                         lifestyleId: setting.lifestyleId
                     }
                 })
-                    .then(function (data) {
-                        output.apiOutput(res, data);
-                    });
+                    .then(data =>
+                        output.apiOutput(res, data)
+                    );
             } else {
                 // This is a new lifestyle item, create it
                 Lifestyle.create({
                     lifestyleName: setting.lifestyleName,
                     lifestyleDailyValue: setting.lifestyleDailyValue
                 })
-                    .then(function (data) {
+                    .then(data => {
                         output.apiOutput(res, data);
                     });
             }
@@ -58,9 +56,9 @@ module.exports = {
                     lifestyleId: req.body.lifestyleId
                 }
             })
-                .then(() => {
-                    output.apiOutput(res, true);
-                });
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide Lifestyle Settings data.");
         }

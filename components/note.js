@@ -1,7 +1,6 @@
 "use strict";
 
 const output = require("../services/output");
-const log = require("pino")();
 const Sequelize = require("sequelize");
 
 const {note: Note} = require("../models");
@@ -16,22 +15,19 @@ module.exports = {
                 ["noteId", "DESC"]
             ],
             raw: true
-        }).then(function (data) {
-            if (data) {
-                output.apiOutput(res, { noteList: data });
-            } else {
-                output.apiOutput(res, []);
-            }
-        });
+        })
+            .then(data =>
+                output.apiOutput(res, data ? { noteList: data } : [])
+            );
     },
     createNote (req, res) {
         Note.create({
             noteArchived: false,
             noteContent: ""
         })
-            .then(function () {
-                output.apiOutput(res, true);
-            });
+            .then(() =>
+                output.apiOutput(res, true)
+            );
     },
     updateNote (req, res) {
         if (req.body.noteId && (req.body.noteContent || req.body.noteTitle)) {
@@ -43,9 +39,10 @@ module.exports = {
                 where: {
                     noteId: req.body.noteId
                 }
-            }).then(function (data) {
-                output.apiOutput(res, data);
-            });
+            })
+                .then(data =>
+                    output.apiOutput(res, data)
+                );
         } else {
             output.error(res, "Please provide Note Content or Note Title.");
         }
@@ -59,8 +56,8 @@ module.exports = {
                 noteId: req.body.noteId
             }
         })
-            .then(function () {
-                output.apiOutput(res, true);
-            });
+            .then(() =>
+                output.apiOutput(res, true)
+            );
     }
 };

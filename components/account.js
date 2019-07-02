@@ -48,12 +48,12 @@ module.exports = {
                                 userId: userData.userId,
                                 authKey
                             })
-                                .then(() => {
+                                .then(() =>
                                     output.apiOutput(res, {
                                         authKey,
                                         userName: userData.userName
-                                    });
-                                });
+                                    })
+                                );
                         }
                     })
             );

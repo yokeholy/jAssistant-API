@@ -1,7 +1,6 @@
 "use strict";
 
 const output = require("../services/output");
-const log = require("pino")();
 const Sequelize = require("sequelize");
 
 const {todo: Todo} = require("../models");
@@ -17,9 +16,9 @@ module.exports = {
                 ]
             },
             raw: true
-        }).then(function (data) {
-            output.apiOutput(res, {todoList: data});
-        });
+        }).then(data =>
+            output.apiOutput(res, {todoList: data})
+        );
     },
     createTodoItem (req, res) {
         // Validation
@@ -27,8 +26,10 @@ module.exports = {
             Todo.create({
                 todoName: req.body.itemName,
                 parentTodoId: req.body.parentTodoId || null
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item name.");
         }
@@ -41,8 +42,10 @@ module.exports = {
                 where: {
                     todoId: req.body.todoId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item ID.");
         }
@@ -56,8 +59,10 @@ module.exports = {
                 where: {
                     todoId: req.body.todoId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item ID.");
         }
@@ -68,8 +73,10 @@ module.exports = {
                 where: {
                     todoId: req.body.todoId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item ID.");
         }
