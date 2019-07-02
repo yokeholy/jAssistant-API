@@ -25,7 +25,8 @@ module.exports = {
         // Validation
         if (req.body.itemName) {
             Todo.create({
-                todoName: req.body.itemName
+                todoName: req.body.itemName,
+                parentTodoId: req.body.parentTodoId || null
             });
             output.apiOutput(res, true);
         } else {
