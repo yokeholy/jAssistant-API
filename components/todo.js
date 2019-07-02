@@ -1,7 +1,6 @@
 "use strict";
 
 const output = require("../services/output");
-const log = require("pino")();
 const Sequelize = require("sequelize");
 
 const {todo: Todo} = require("../models");
@@ -17,17 +16,42 @@ module.exports = {
                 ]
             },
             raw: true
-        }).then(function (data) {
-            output.apiOutput(res, {todoList: data});
+        }).then(data => {
+            // Loop through the list to separate root todo items from sub todo items
+            let rootTodos = [];
+            let subTodos = [];
+            for (let i = 0; i < data.length; i++) {
+                const todoItem = data[i];
+                if (todoItem.parentTodoId !== null) {
+                    subTodos.push(todoItem);
+                } else {
+                    todoItem.subTodos = [];
+                    rootTodos.push(todoItem);
+                }
+            }
+            // Loop through the sub todos to put them into root todos
+            for (let j = 0; j < subTodos.length; j++) {
+                const subTodoItem = subTodos[j];
+                for (let k = 0; k < rootTodos.length; k++) {
+                    const rootTodoItem = rootTodos[k];
+                    if (subTodoItem.parentTodoId === rootTodoItem.todoId) {
+                        rootTodoItem.subTodos.push(subTodoItem);
+                    }
+                }
+            }
+            return output.apiOutput(res, {todoList: rootTodos});
         });
     },
     createTodoItem (req, res) {
         // Validation
         if (req.body.itemName) {
             Todo.create({
-                todoName: req.body.itemName
-            });
-            output.apiOutput(res, true);
+                todoName: req.body.itemName,
+                parentTodoId: req.body.parentTodoId || null
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item name.");
         }
@@ -40,8 +64,10 @@ module.exports = {
                 where: {
                     todoId: req.body.todoId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item ID.");
         }
@@ -55,8 +81,10 @@ module.exports = {
                 where: {
                     todoId: req.body.todoId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item ID.");
         }
@@ -67,8 +95,10 @@ module.exports = {
                 where: {
                     todoId: req.body.todoId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Todo Item ID.");
         }

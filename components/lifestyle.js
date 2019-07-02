@@ -18,7 +18,7 @@ module.exports = {
                 transaction: t,
                 raw: true
             })
-                .then(function (data) {
+                .then(data => {
                     lifestyles = data;
                     return LifestyleHistory.findAll({
                         group: ["lifestyleId"],
@@ -29,7 +29,7 @@ module.exports = {
                     });
                 })
         )
-            .then(function (data) {
+            .then(data => {
                 for (let i = 0; i < data.length; i++) {
                     for (let j = 0; j < lifestyles.length; j++) {
                         if (lifestyles[j].lifestyleId === data[i].lifestyleId) {
@@ -37,7 +37,7 @@ module.exports = {
                         }
                     }
                 }
-                output.apiOutput(res, { lifestyles });
+                return output.apiOutput(res, { lifestyles });
             });
     },
     upLifestyle (req, res) {
@@ -45,9 +45,9 @@ module.exports = {
             LifestyleHistory.create({
                 lifestyleId: req.body.lifestyleId
             })
-                .then(function (data) {
-                    output.apiOutput(res, data);
-                });
+                .then(data =>
+                    output.apiOutput(res, data)
+                );
         } else {
             output.error(res, "Please provide Lifestyle Id.");
         }

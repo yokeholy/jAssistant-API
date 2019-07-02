@@ -1,7 +1,6 @@
 "use strict";
 
 const output = require("../services/output");
-const log = require("pino")();
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../models").database;
 
@@ -18,17 +17,19 @@ module.exports = {
                 routineActive: true
             },
             raw: true
-        }).then(function (data) {
-            output.apiOutput(res, {routineList: data});
-        });
+        }).then(data =>
+            output.apiOutput(res, {routineList: data})
+        );
     },
     createRoutine (req, res) {
         // Validation
         if (req.body.newRoutine) {
             Routine.create({
                 routineName: req.body.newRoutine
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Routine Name.");
         }
@@ -41,8 +42,10 @@ module.exports = {
                 where: {
                     routineId: req.body.routineId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Routine ID.");
         }
@@ -93,8 +96,10 @@ module.exports = {
                 where: {
                     routineId: req.body.routineId
                 }
-            });
-            output.apiOutput(res, true);
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
         } else {
             output.error(res, "Please provide the Routine ID.");
         }
