@@ -6,24 +6,28 @@ const log = require("pino")();
 module.exports = {
     apiOutput (res, data) {
         // Successful API execution
-        res.json({
-            metadata: {
-                status: true,
-                version: currentVersion,
-            },
-            data: data ? data : true
-        }).end();
+        res.status(200)
+            .json({
+                metadata: {
+                    status: true,
+                    version: currentVersion,
+                },
+                data: data ? data : true
+            })
+            .end();
     },
 
     error (res, message) {
         // Successful API execution
-        res.json({
-            metadata: {
-                status: false,
-                version: currentVersion,
-                message
-            }
-        }).end();
+        res.status(200)
+            .json({
+                metadata: {
+                    status: false,
+                    version: currentVersion,
+                    message
+                }
+            })
+            .end();
     },
 
     authError (res, message) {
