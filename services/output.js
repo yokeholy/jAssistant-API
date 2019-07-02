@@ -15,6 +15,17 @@ module.exports = {
         }).end();
     },
 
+    error (res, message) {
+        // Successful API execution
+        res.json({
+            metadata: {
+                status: false,
+                version: currentVersion,
+                message
+            }
+        }).end();
+    },
+
     authError (res, message) {
         log.error(`AUTHENTICATION ERROR: ${message}`);
         res.status(401)
