@@ -2,6 +2,7 @@
 
 module.exports = {
     up: (queryInterface, DataTypes) =>
+        // TODO: Add default category Id 1
         queryInterface.createTable("todoCategory", {
             todoCategoryId: {
                 type: DataTypes.INTEGER(100),
