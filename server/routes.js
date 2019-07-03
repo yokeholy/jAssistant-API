@@ -6,6 +6,7 @@ const account = require("../components/account");
 const todo = require("../components/todo");
 const note = require("../components/note");
 const routine = require("../components/routine");
+const comment = require("../components/comment");
 const lifestyle = require("../components/lifestyle");
 const settings = require("../components/settings");
 
@@ -33,6 +34,11 @@ module.exports = function (server) {
         .post("/routine/updateRoutine", userAuthentication, routine.updateRoutine)
         .post("/routine/checkInRoutine", userAuthentication, routine.checkInRoutine)
         .post("/routine/deleteRoutine", userAuthentication, routine.deleteRoutine);
+    // Comment
+    server
+        .post("/comment/getCommentList", userAuthentication, comment.getCommentList)
+        .post("/comment/createComment", userAuthentication, comment.createComment)
+        .post("/comment/deleteComment", userAuthentication, comment.deleteComment);
     // Lifestyle
     server
         .get("/lifestyle/getLifestyle", userAuthentication, lifestyle.getLifestyle)

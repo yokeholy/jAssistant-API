@@ -21,6 +21,11 @@ module.exports = {
                 type: DataTypes.INTEGER(100),
                 allowNull: false
             },
+            commentCreatedDate: {
+                type: DataTypes.DATE,
+                allowNull: false,
+                defaultValue: DataTypes.literal("CURRENT_TIMESTAMP")
+            },
             commentDeleted: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
@@ -28,7 +33,7 @@ module.exports = {
             },
         }, {
             tableName: "comment",
-            timestamps: true
+            timestamps: false
         }),
 
     down: queryInterface => queryInterface.dropTable("comment")

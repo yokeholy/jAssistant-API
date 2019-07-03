@@ -18,6 +18,11 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER(100),
             allowNull: false
         },
+        commentCreatedDate: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+        },
         commentDeleted: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
@@ -25,7 +30,7 @@ module.exports = function (sequelize, DataTypes) {
         },
     }, {
         tableName: "comment",
-        timestamps: true
+        timestamps: false
     });
     return comment;
 };
