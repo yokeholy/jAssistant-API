@@ -16,7 +16,10 @@ module.exports = {
             raw: true
         })
             .then(data =>
-                output.apiOutput(res, {lifestyleSettings: data, contentSettings})
+                output.apiOutput(res, {
+                    lifestyleSettings: data,
+                    contentSettings
+                })
             );
     },
     saveLifestyleSetting (req, res) {
