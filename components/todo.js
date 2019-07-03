@@ -82,6 +82,7 @@ module.exports = {
         if (req.body.itemName) {
             Todo.create({
                 todoName: req.body.itemName,
+                todoCategoryId: req.body.todoCategoryId || 1,
                 parentTodoId: req.body.parentTodoId || null
             })
                 .then(() =>
