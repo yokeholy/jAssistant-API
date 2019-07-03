@@ -4,18 +4,29 @@ const output = require("../services/output");
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../models").database;
 
-const {routine: Routine, routineHistory: RoutineHistory} = require("../models");
+const {routine: Routine, routineHistory: RoutineHistory, comment: Comment} = require("../models");
 
 module.exports = {
     getRoutineList (req, res) {
         Routine.findAll({
             attributes: [
                 "*",
-                Sequelize.literal("IF(DATEDIFF(CURRENT_TIMESTAMP, routineLastCheckInDate) < 1, 1, 0) AS routineCheckedIn")
+                Sequelize.literal("IF(DATEDIFF(CURRENT_TIMESTAMP, routineLastCheckInDate) < 1, 1, 0) AS routineCheckedIn"),
+                [Sequelize.fn("COUNT", Sequelize.col("Comment.commentId")), "commentCount"]
             ],
             where: {
                 routineActive: true
             },
+            include: [{
+                model: Comment,
+                attributes: [],
+                where: {
+                    commentType: 2,
+                    commentDeleted: 0
+                },
+                required: false
+            }],
+            group: ["routine.routineId"],
             raw: true
         }).then(data =>
             output.apiOutput(res, {routineList: data})

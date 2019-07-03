@@ -1,7 +1,6 @@
 "use strict";
 
 const output = require("../services/output");
-const Sequelize = require("sequelize");
 
 const {comment: Comment} = require("../models");
 
