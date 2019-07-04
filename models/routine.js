@@ -37,5 +37,10 @@ module.exports = function (sequelize, DataTypes) {
         tableName: "routine",
         timestamps: false
     });
+    routine.associate = function (models) {
+        routine.hasOne(models.comment, {
+            foreignKey: "commentEntityId"
+        });
+    };
     return routine;
 };
