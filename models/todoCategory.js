@@ -13,7 +13,7 @@ module.exports = function (sequelize, DataTypes) {
         todoCategoryStatus: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: false
+            defaultValue: true
         }
     }, {
         tableName: "todoCategory",

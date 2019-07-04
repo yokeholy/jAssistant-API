@@ -17,7 +17,7 @@ module.exports = {
             todoCategoryStatus: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
-                defaultValue: false
+                defaultValue: true
             }
         }, {
             tableName: "todoCategory",

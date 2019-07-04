@@ -2,25 +2,41 @@
 
 const output = require("../services/output");
 const Sequelize = require("sequelize");
+const sequelizeInstance = require("../models").database;
 
 const Content = require("../config/content");
-const {lifestyle: Lifestyle} = require("../models");
+const {lifestyle: Lifestyle, todoCategory: TodoCategory} = require("../models");
 
 module.exports = {
     getAllSettings (req, res) {
         let contentSettings = Content;
-        Lifestyle.findAll({
-            where: {
-                lifestyleStatus: true
-            },
-            raw: true
-        })
-            .then(data =>
-                output.apiOutput(res, {
-                    lifestyleSettings: data,
-                    contentSettings
+        let lifestyleSettings;
+        sequelizeInstance.transaction(t =>
+            Lifestyle.findAll({
+                where: {
+                    lifestyleStatus: true
+                },
+                transaction: t,
+                raw: true
+            })
+                .then(data => {
+                    lifestyleSettings = data;
+                    return TodoCategory.findAll({
+                        where: {
+                            todoCategoryStatus: true
+                        },
+                        transaction: t,
+                        raw: true
+                    });
                 })
-            );
+                .then(todoCategoryData =>
+                    output.apiOutput(res, {
+                        lifestyleSettings,
+                        contentSettings,
+                        todoCategorySettings: todoCategoryData
+                    })
+                )
+        );
     },
     saveLifestyleSetting (req, res) {
         if (req.body) {
@@ -64,6 +80,50 @@ module.exports = {
                 );
         } else {
             output.error(res, "Please provide Lifestyle Settings data.");
+        }
+    },
+    saveTodoCategorySetting (req, res) {
+        if (req.body) {
+            const setting = req.body;
+            if (setting.todoCategoryId) {
+                req.body.todoCategoryUpdatedDate = Sequelize.literal("NOW()");
+                // This is an exiting todoCategory item, update the setting instead of creating a new one
+                TodoCategory.update(req.body, {
+                    where: {
+                        todoCategoryId: setting.todoCategoryId
+                    }
+                })
+                    .then(data =>
+                        output.apiOutput(res, data)
+                    );
+            } else {
+                // This is a new todoCategory item, create it
+                TodoCategory.create({
+                    todoCategoryName: setting.todoCategoryName,
+                    todoCategoryDailyValue: setting.todoCategoryDailyValue
+                })
+                    .then(data => {
+                        output.apiOutput(res, data);
+                    });
+            }
+        } else {
+            output.error(res, "Please provide Todo Category Settings data.");
+        }
+    },
+    deleteTodoCategorySetting (req, res) {
+        if (req.body.todoCategoryId) {
+            TodoCategory.update({
+                todoCategoryStatus: false
+            }, {
+                where: {
+                    todoCategoryId: req.body.todoCategoryId
+                }
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
+        } else {
+            output.error(res, "Please provide Todo Category Settings data.");
         }
     }
 };
