@@ -11,9 +11,19 @@ module.exports = {
         let categoryList = [];
         sequelizeInstance.transaction(t =>
             TodoCategory.findAll({
+                attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Todo.TodoId")), "todoCount"]],
                 where: {
                     todoCategoryStatus: true
                 },
+                include: [{
+                    model: Todo,
+                    attributes: [],
+                    where: {
+                        todoStatus: false
+                    },
+                    required: false
+                }],
+                group: ["todoCategory.todoCategoryId"],
                 transaction: t,
                 raw: true
             })

@@ -5,7 +5,7 @@ const Sequelize = require("sequelize");
 const sequelizeInstance = require("../models").database;
 
 const Content = require("../config/content");
-const {lifestyle: Lifestyle, todoCategory: TodoCategory} = require("../models");
+const {lifestyle: Lifestyle, todoCategory: TodoCategory, todo: Todo} = require("../models");
 
 module.exports = {
     getAllSettings (req, res) {
@@ -22,9 +22,19 @@ module.exports = {
                 .then(data => {
                     lifestyleSettings = data;
                     return TodoCategory.findAll({
+                        attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Todo.TodoId")), "todoCount"]],
                         where: {
                             todoCategoryStatus: true
                         },
+                        include: [{
+                            model: Todo,
+                            attributes: [],
+                            where: {
+                                todoStatus: false
+                            },
+                            required: false
+                        }],
+                        group: ["todoCategory.todoCategoryId"],
                         transaction: t,
                         raw: true
                     });
