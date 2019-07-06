@@ -21,7 +21,7 @@ module.exports = {
             }
         }, {
             tableName: "todoCategory",
-            timestamps: true
+            timestamps: false
         }),
 
     down: queryInterface => queryInterface.dropTable("todoCategory")
