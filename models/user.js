@@ -20,7 +20,7 @@ module.exports = function (queryInterface, Sequelize) {
         }
     }, {
         tableName: "user",
-        timestamps: true,
+        timestamps: false,
         charset: "utf8",
         collate: "utf8_unicode_ci"
     });

@@ -17,7 +17,7 @@ module.exports = function (sequelize, DataTypes) {
         }
     }, {
         tableName: "todoCategory",
-        timestamps: true
+        timestamps: false
     });
     todoCategory.associate = function (models) {
         todoCategory.hasOne(models.todo, {
