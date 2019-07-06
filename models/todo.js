@@ -6,6 +6,11 @@ module.exports = function (sequelize, DataTypes) {
             primaryKey: true,
             autoIncrement: true
         },
+        todoCategoryId: {
+            type: DataTypes.INTEGER(100),
+            allowNull: false,
+            defaultValue: 1
+        },
         todoName: {
             type: DataTypes.STRING(100),
             allowNull: false

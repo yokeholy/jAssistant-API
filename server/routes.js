@@ -47,5 +47,7 @@ module.exports = function (server) {
     server
         .get("/settings/getAllSettings", userAuthentication, settings.getAllSettings)
         .post("/settings/saveLifestyleSetting", userAuthentication, settings.saveLifestyleSetting)
-        .post("/settings/deleteLifestyleSetting", userAuthentication, settings.deleteLifestyleSetting);
+        .post("/settings/deleteLifestyleSetting", userAuthentication, settings.deleteLifestyleSetting)
+        .post("/settings/saveTodoCategorySetting", userAuthentication, settings.saveTodoCategorySetting)
+        .post("/settings/deleteTodoCategorySetting", userAuthentication, settings.deleteTodoCategorySetting);
 };

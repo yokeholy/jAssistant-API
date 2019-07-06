@@ -2,62 +2,97 @@
 
 const output = require("../services/output");
 const Sequelize = require("sequelize");
+const sequelizeInstance = require("../models").database;
 
-const {todo: Todo, comment: Comment} = require("../models");
+const {todoCategory: TodoCategory, todo: Todo, comment: Comment} = require("../models");
 
 module.exports = {
     getTodoList (req, res) {
-        Todo.findAll({
-            attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Comment.commentId")), "commentCount"]],
-            where: {
-                [Sequelize.Op.or]: [
-                    {todoStatus: false},
-                    Sequelize.literal("DATE(todoUpdatedDate) = CURDATE()"),
-                    Sequelize.literal("DATE(todoCreatedDate) = CURDATE()")
-                ]
-            },
-            include: [{
-                model: Comment,
-                attributes: [],
+        let categoryList = [];
+        sequelizeInstance.transaction(t =>
+            TodoCategory.findAll({
+                attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Todo.TodoId")), "todoCount"]],
                 where: {
-                    commentType: 1,
-                    commentDeleted: 0
+                    todoCategoryStatus: true
                 },
-                required: false
-            }],
-            group: ["todo.todoId"],
-            raw: true
-        }).then(data => {
-            // Loop through the list to separate root todo items from sub todo items
-            let rootTodos = [];
-            let subTodos = [];
-            for (let i = 0; i < data.length; i++) {
-                const todoItem = data[i];
-                if (todoItem.parentTodoId !== null) {
-                    subTodos.push(todoItem);
-                } else {
-                    todoItem.subTodos = [];
-                    rootTodos.push(todoItem);
-                }
-            }
-            // Loop through the sub todos to put them into root todos
-            for (let j = 0; j < subTodos.length; j++) {
-                const subTodoItem = subTodos[j];
-                for (let k = 0; k < rootTodos.length; k++) {
-                    const rootTodoItem = rootTodos[k];
-                    if (subTodoItem.parentTodoId === rootTodoItem.todoId) {
-                        rootTodoItem.subTodos.push(subTodoItem);
+                include: [{
+                    model: Todo,
+                    attributes: [],
+                    where: {
+                        todoStatus: false
+                    },
+                    required: false
+                }],
+                group: ["todoCategory.todoCategoryId"],
+                transaction: t,
+                raw: true
+            })
+                .then(categoryData => {
+                    categoryList = categoryData;
+                    return Todo.findAll({
+                        attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Comment.commentId")), "commentCount"]],
+                        where: {
+                            [Sequelize.Op.or]: [
+                                {todoStatus: false},
+                                Sequelize.literal("DATE(todoUpdatedDate) = CURDATE()"),
+                                Sequelize.literal("DATE(todoCreatedDate) = CURDATE()")
+                            ]
+                        },
+                        include: [{
+                            model: Comment,
+                            attributes: [],
+                            where: {
+                                commentType: 1,
+                                commentDeleted: 0
+                            },
+                            required: false
+                        }],
+                        group: ["todo.todoId"],
+                        raw: true
+                    });
+                })
+                .then(todoData => {
+                    // Loop through the list to separate root todo items from sub todo items
+                    let rootTodos = [];
+                    let subTodos = [];
+                    for (let i = 0; i < todoData.length; i++) {
+                        const todoItem = todoData[i];
+                        if (todoItem.parentTodoId !== null) {
+                            subTodos.push(todoItem);
+                        } else {
+                            todoItem.subTodos = [];
+                            rootTodos.push(todoItem);
+                        }
                     }
-                }
-            }
-            return output.apiOutput(res, {todoList: rootTodos});
-        });
+                    // Loop through the sub todos to put them into root todos
+                    for (let j = 0; j < subTodos.length; j++) {
+                        const subTodoItem = subTodos[j];
+                        for (let k = 0; k < rootTodos.length; k++) {
+                            const rootTodoItem = rootTodos[k];
+                            if (subTodoItem.parentTodoId === rootTodoItem.todoId) {
+                                rootTodoItem.subTodos.push(subTodoItem);
+                            }
+                        }
+                    }
+                    // Insert todo items into its category list
+                    for (let c = 0; c < categoryList.length; c++) {
+                        categoryList[c].todoList = [];
+                        for (let r = 0; r < rootTodos.length; r++) {
+                            if (categoryList[c].todoCategoryId === rootTodos[r].todoCategoryId) {
+                                categoryList[c].todoList.push(rootTodos[r]);
+                            }
+                        }
+                    }
+                    return output.apiOutput(res, {todoCategoryList: categoryList});
+                })
+        );
     },
     createTodoItem (req, res) {
         // Validation
         if (req.body.itemName) {
             Todo.create({
                 todoName: req.body.itemName,
+                todoCategoryId: req.body.todoCategoryId || 1,
                 parentTodoId: req.body.parentTodoId || null
             })
                 .then(() =>
