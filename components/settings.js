@@ -122,18 +122,31 @@ module.exports = {
     },
     deleteTodoCategorySetting (req, res) {
         if (req.body.todoCategoryId) {
-            TodoCategory.update({
-                todoCategoryStatus: false
-            }, {
+            return Todo.count({
                 where: {
-                    todoCategoryId: req.body.todoCategoryId
-                }
+                    todoCategoryId: req.body.todoCategoryId,
+                    todoStatus: false
+                },
+                raw: 1
             })
-                .then(() =>
-                    output.apiOutput(res, true)
-                );
+                .then(todoCountData => {
+                    if (todoCountData > 0) {
+                        return output.error(res, "This Todo Category has more than 0 unfinished Todo items. Thus deleting it is not allowed.");
+                    } else {
+                        return TodoCategory.update({
+                            todoCategoryStatus: false
+                        }, {
+                            where: {
+                                todoCategoryId: req.body.todoCategoryId
+                            }
+                        })
+                            .then(() =>
+                                output.apiOutput(res, true)
+                            );
+                    }
+                });
         } else {
-            output.error(res, "Please provide Todo Category Settings data.");
+            return output.error(res, "Please provide Todo Category Settings data.");
         }
     }
 };
