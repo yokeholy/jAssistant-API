@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, Sequelize) =>
-        queryInterface.createTable("user", {
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.createTable("user", {
             userId: {
                 type: Sequelize.INTEGER(10),
                 allowNull: false,
@@ -28,5 +28,5 @@ module.exports = {
             collate: "utf8_unicode_ci"
         }),
 
-    down: queryInterface => queryInterface.dropTable("user")
+    down: QueryInterface => QueryInterface.dropTable("user")
 };

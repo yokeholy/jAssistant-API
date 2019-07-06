@@ -1,37 +1,39 @@
-module.exports = function (sequelize, DataTypes) {
-    const note = sequelize.define("note", {
+module.exports = function (QueryInterface, Sequelize) {
+    const note = QueryInterface.define("note", {
         noteId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
         noteTitle: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false,
             defaultValue: ""
         },
         noteContent: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false
         },
         noteArchived: {
-            type: DataTypes.BOOLEAN,
+            type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false
         },
         noteCreatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         },
         noteUpdatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: true
         }
     }, {
         tableName: "note",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     return note;
 };

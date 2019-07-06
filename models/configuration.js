@@ -1,17 +1,19 @@
-module.exports = function (sequelize, DataTypes) {
-    const configuration = sequelize.define("configuration", {
+module.exports = function (QueryInterface, Sequelize) {
+    const configuration = QueryInterface.define("configuration", {
         configurationItem: {
-            type: DataTypes.STRING(100),
+            type: Sequelize.STRING(100),
             allowNull: false,
             primaryKey: true
         },
         configurationValue: {
-            type: DataTypes.STRING(100),
+            type: Sequelize.STRING(100),
             allowNull: false
         }
     }, {
         tableName: "configuration",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     return configuration;
 };

@@ -1,41 +1,43 @@
-module.exports = function (sequelize, DataTypes) {
-    const todo = sequelize.define("todo", {
+module.exports = function (QueryInterface, Sequelize) {
+    const todo = QueryInterface.define("todo", {
         todoId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
         todoCategoryId: {
-            type: DataTypes.INTEGER(100),
+            type: Sequelize.INTEGER(100),
             allowNull: false,
             defaultValue: 1
         },
         todoName: {
-            type: DataTypes.STRING(100),
+            type: Sequelize.STRING(100),
             allowNull: false
         },
         todoStatus: {
-            type: DataTypes.BOOLEAN,
+            type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false
         },
         todoCreatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         },
         todoUpdatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: true
         },
         parentTodoId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: true
         }
     }, {
         tableName: "todo",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     todo.associate = function (models) {
         todo.hasOne(models.comment, {

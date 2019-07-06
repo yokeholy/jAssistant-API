@@ -1,5 +1,5 @@
-module.exports = function (queryInterface, Sequelize) {
-    const user = queryInterface.define("user", {
+module.exports = function (QueryInterface, Sequelize) {
+    const user = QueryInterface.define("user", {
         userId: {
             type: Sequelize.INTEGER(10),
             allowNull: false,

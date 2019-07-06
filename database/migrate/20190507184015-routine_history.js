@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, Sequelize) =>
-        queryInterface.createTable("routineHistory", {
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.createTable("routineHistory", {
             routineHistoryId: {
                 type: Sequelize.INTEGER(10),
                 allowNull: false,
@@ -16,7 +16,7 @@ module.exports = {
             historyDate: {
                 type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+                defaultValue: Sequelize.NOW
             }
         }, {
             tableName: "routineHistory",
@@ -25,5 +25,5 @@ module.exports = {
             collate: "utf8_unicode_ci"
         }),
 
-    down: queryInterface => queryInterface.dropTable("routineHistory")
+    down: QueryInterface => QueryInterface.dropTable("routineHistory")
 };

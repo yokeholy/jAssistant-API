@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, Sequelize) =>
-        queryInterface.addColumn(
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.addColumn(
             "note",
             "noteTitle",
             {
@@ -13,8 +13,8 @@ module.exports = {
             }
         ),
 
-    down: queryInterface =>
-        queryInterface.removeColumn(
+    down: QueryInterface =>
+        QueryInterface.removeColumn(
             "note",
             "noteTitle"
         )

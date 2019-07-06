@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, Sequelize) =>
-        queryInterface.createTable("lifestyle", {
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.createTable("lifestyle", {
             lifestyleDate: {
                 type: Sequelize.DATEONLY,
                 allowNull: false,
@@ -31,5 +31,5 @@ module.exports = {
             collate: "utf8_unicode_ci"
         }),
 
-    down: queryInterface => queryInterface.dropTable("lifestyle")
+    down: QueryInterface => QueryInterface.dropTable("lifestyle")
 };

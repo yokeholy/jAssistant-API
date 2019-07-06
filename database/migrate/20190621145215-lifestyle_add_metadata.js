@@ -1,23 +1,23 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, DataTypes) =>
-        queryInterface.addColumn(
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.addColumn(
             "lifestyle",
             "lifestyleStatus",
             {
-                type: DataTypes.BOOLEAN,
+                type: Sequelize.BOOLEAN,
                 allowNull: false,
                 defaultValue: true,
                 after: "lifestyleId"
             }
         )
             .then(() =>
-                queryInterface.addColumn(
+                QueryInterface.addColumn(
                     "lifestyle",
                     "lifestyleCaption",
                     {
-                        type: DataTypes.TEXT,
+                        type: Sequelize.TEXT,
                         allowNull: false,
                         defaultValue: "",
                         after: "lifestyleName"
@@ -25,11 +25,11 @@ module.exports = {
                 )
             )
             .then(() =>
-                queryInterface.addColumn(
+                QueryInterface.addColumn(
                     "lifestyle",
                     "lifestyleIconName",
                     {
-                        type: DataTypes.TEXT,
+                        type: Sequelize.TEXT,
                         allowNull: false,
                         defaultValue: "success",
                         after: "lifestyleCaption"
@@ -37,11 +37,11 @@ module.exports = {
                 )
             )
             .then(() =>
-                queryInterface.addColumn(
+                QueryInterface.addColumn(
                     "lifestyle",
                     "lifestyleColorName",
                     {
-                        type: DataTypes.TEXT,
+                        type: Sequelize.TEXT,
                         allowNull: false,
                         defaultValue: "tint",
                         after: "lifestyleIconName"
@@ -49,25 +49,25 @@ module.exports = {
                 )
             ),
 
-    down: queryInterface =>
-        queryInterface.removeColumn(
+    down: QueryInterface =>
+        QueryInterface.removeColumn(
             "lifestyle",
             "lifestyleStatus"
         )
             .then(() =>
-                queryInterface.removeColumn(
+                QueryInterface.removeColumn(
                     "lifestyle",
                     "lifestyleCaption"
                 )
             )
             .then(() =>
-                queryInterface.removeColumn(
+                QueryInterface.removeColumn(
                     "lifestyle",
                     "lifestyleIconName"
                 )
             )
             .then(() =>
-                queryInterface.removeColumn(
+                QueryInterface.removeColumn(
                     "lifestyle",
                     "lifestyleColorName"
                 )

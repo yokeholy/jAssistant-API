@@ -1,19 +1,19 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, DataTypes) =>
-        queryInterface.addColumn(
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.addColumn(
             "todo",
             "todoCategoryId",
             {
-                type: DataTypes.INTEGER(100),
+                type: Sequelize.INTEGER(100),
                 allowNull: false,
                 defaultValue: 1,
                 after: "todoId"
             }
         ),
 
-    down: queryInterface => queryInterface.removeColumn(
+    down: QueryInterface => QueryInterface.removeColumn(
         "todo",
         "todoCategoryId"
     )

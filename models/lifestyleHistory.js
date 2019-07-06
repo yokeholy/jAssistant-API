@@ -1,18 +1,20 @@
-module.exports = function (sequelize, DataTypes) {
-    const lifestyleHistory = sequelize.define("lifestyleHistory", {
+module.exports = function (QueryInterface, Sequelize) {
+    const lifestyleHistory = QueryInterface.define("lifestyleHistory", {
         lifestyleHistoryDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
             primaryKey: true,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         },
         lifestyleId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: false
         }
     }, {
         tableName: "lifestyleHistory",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     return lifestyleHistory;
 };

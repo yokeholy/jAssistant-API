@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, Sequelize) =>
-        queryInterface.createTable("note", {
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.createTable("note", {
             noteId: {
                 type: Sequelize.INTEGER(10),
                 allowNull: false,
@@ -21,7 +21,7 @@ module.exports = {
             noteCreatedDate: {
                 type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+                defaultValue: Sequelize.NOW
             },
             noteUpdatedDate: {
                 type: Sequelize.DATE,
@@ -34,5 +34,5 @@ module.exports = {
             collate: "utf8_unicode_ci"
         }),
 
-    down: queryInterface => queryInterface.dropTable("note")
+    down: QueryInterface => QueryInterface.dropTable("note")
 };

@@ -1,52 +1,54 @@
-module.exports = function (sequelize, DataTypes) {
-    const lifestyle = sequelize.define("lifestyle", {
+module.exports = function (QueryInterface, Sequelize) {
+    const lifestyle = QueryInterface.define("lifestyle", {
         lifestyleId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
         lifestyleStatus: {
-            type: DataTypes.BOOLEAN,
+            type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: true
         },
         lifestyleName: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false
         },
         lifestyleCaption: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false,
             defaultValue: ""
         },
         lifestyleIconName: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false,
             defaultValue: "success"
         },
         lifestyleColorName: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false,
             defaultValue: "tint"
         },
         lifestyleDailyValue: {
-            type: DataTypes.INTEGER(2),
+            type: Sequelize.INTEGER(2),
             allowNull: false,
             defaultValue: 1
         },
         lifestyleCreatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         },
         lifestyleUpdatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: true
         }
     }, {
         tableName: "lifestyle",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     return lifestyle;
 };

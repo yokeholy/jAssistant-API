@@ -1,8 +1,8 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, Sequelize) =>
-        queryInterface.createTable("loginSession", {
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.createTable("loginSession", {
             loginSessionId: {
                 type: Sequelize.INTEGER(10),
                 allowNull: false,
@@ -20,7 +20,7 @@ module.exports = {
             sessionTime: {
                 type: Sequelize.DATE,
                 allowNull: false,
-                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+                defaultValue: Sequelize.NOW
             }
         }, {
             tableName: "loginSession",
@@ -29,5 +29,5 @@ module.exports = {
             collate: "utf8_unicode_ci"
         }),
 
-    down: queryInterface => queryInterface.dropTable("loginSession")
+    down: QueryInterface => QueryInterface.dropTable("loginSession")
 };

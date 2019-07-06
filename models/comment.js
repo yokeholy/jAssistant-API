@@ -1,36 +1,38 @@
-module.exports = function (sequelize, DataTypes) {
-    const comment = sequelize.define("comment", {
+module.exports = function (QueryInterface, Sequelize) {
+    const comment = QueryInterface.define("comment", {
         commentId: {
-            type: DataTypes.INTEGER(100),
+            type: Sequelize.INTEGER(100),
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
         commentContent: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false
         },
         commentType: {
-            type: DataTypes.INTEGER(1),
+            type: Sequelize.INTEGER(1),
             allowNull: false
         },
         commentEntityId: {
-            type: DataTypes.INTEGER(100),
+            type: Sequelize.INTEGER(100),
             allowNull: false
         },
         commentCreatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         },
         commentDeleted: {
-            type: DataTypes.BOOLEAN,
+            type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false
         },
     }, {
         tableName: "comment",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     return comment;
 };

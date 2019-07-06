@@ -1,23 +1,25 @@
-module.exports = function (sequelize, DataTypes) {
-    const routineHistory = sequelize.define("routineHistory", {
+module.exports = function (QueryInterface, Sequelize) {
+    const routineHistory = QueryInterface.define("routineHistory", {
         routineHistoryId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
         routineId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: false
         },
         historyDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         }
     }, {
         tableName: "routineHistory",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     return routineHistory;
 };

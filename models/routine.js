@@ -1,41 +1,43 @@
-module.exports = function (sequelize, DataTypes) {
-    const routine = sequelize.define("routine", {
+module.exports = function (QueryInterface, Sequelize) {
+    const routine = QueryInterface.define("routine", {
         routineId: {
-            type: DataTypes.INTEGER(10),
+            type: Sequelize.INTEGER(10),
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
         routineName: {
-            type: DataTypes.STRING(100),
+            type: Sequelize.STRING(100),
             allowNull: false
         },
         routineActive: {
-            type: DataTypes.BOOLEAN,
+            type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: true
         },
         routineConsecutive: {
-            type: DataTypes.INTEGER(6),
+            type: Sequelize.INTEGER(6),
             allowNull: false,
             defaultValue: 0
         },
         routineCreatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: sequelize.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         },
         routineUpdatedDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: true
         },
         routineLastCheckInDate: {
-            type: DataTypes.DATE,
+            type: Sequelize.DATE,
             allowNull: true
         }
     }, {
         tableName: "routine",
-        timestamps: false
+        timestamps: false,
+        charset: "utf8",
+        collate: "utf8_unicode_ci"
     });
     routine.associate = function (models) {
         routine.hasOne(models.comment, {

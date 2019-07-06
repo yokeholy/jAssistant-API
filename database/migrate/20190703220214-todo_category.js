@@ -1,28 +1,30 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, DataTypes) =>
+    up: (QueryInterface, Sequelize) =>
         // TODO: Add default category Id 1
-        queryInterface.createTable("todoCategory", {
+        QueryInterface.createTable("todoCategory", {
             todoCategoryId: {
-                type: DataTypes.INTEGER(100),
+                type: Sequelize.INTEGER(100),
                 allowNull: false,
                 primaryKey: true,
                 autoIncrement: true
             },
             todoCategoryName: {
-                type: DataTypes.TEXT,
+                type: Sequelize.TEXT,
                 allowNull: false
             },
             todoCategoryStatus: {
-                type: DataTypes.BOOLEAN,
+                type: Sequelize.BOOLEAN,
                 allowNull: false,
                 defaultValue: true
             }
         }, {
             tableName: "todoCategory",
-            timestamps: false
+            timestamps: false,
+            charset: "utf8",
+            collate: "utf8_unicode_ci"
         }),
 
-    down: queryInterface => queryInterface.dropTable("todoCategory")
+    down: QueryInterface => QueryInterface.dropTable("todoCategory")
 };

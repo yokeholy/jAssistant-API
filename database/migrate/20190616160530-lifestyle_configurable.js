@@ -1,32 +1,32 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, DataTypes) =>
-        queryInterface.dropTable("lifestyle")
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.dropTable("lifestyle")
             .then(() =>
-                queryInterface.createTable("lifestyle", {
+                QueryInterface.createTable("lifestyle", {
                     lifestyleId: {
-                        type: DataTypes.INTEGER(10),
+                        type: Sequelize.INTEGER(10),
                         allowNull: false,
                         primaryKey: true,
                         autoIncrement: true
                     },
                     lifestyleName: {
-                        type: DataTypes.TEXT,
+                        type: Sequelize.TEXT,
                         allowNull: false
                     },
                     lifestyleDailyValue: {
-                        type: DataTypes.INTEGER(2),
+                        type: Sequelize.INTEGER(2),
                         allowNull: false,
                         defaultValue: 1
                     },
                     lifestyleCreatedDate: {
-                        type: DataTypes.DATE,
+                        type: Sequelize.DATE,
                         allowNull: false,
-                        defaultValue: DataTypes.literal("CURRENT_TIMESTAMP")
+                        defaultValue: Sequelize.NOW
                     },
                     lifestyleUpdatedDate: {
-                        type: DataTypes.DATE,
+                        type: Sequelize.DATE,
                         allowNull: true
                     }
                 }, {
@@ -37,18 +37,18 @@ module.exports = {
                 })
             )
             .then(() =>
-                queryInterface.dropTable("lifestyleHistory")
+                QueryInterface.dropTable("lifestyleHistory")
             )
             .then(() =>
-                queryInterface.createTable("lifestyleHistory", {
+                QueryInterface.createTable("lifestyleHistory", {
                     lifestyleHistoryDate: {
-                        type: DataTypes.DATE,
+                        type: Sequelize.DATE,
                         allowNull: false,
                         primaryKey: true,
-                        defaultValue: DataTypes.literal("CURRENT_TIMESTAMP")
+                        defaultValue: Sequelize.NOW
                     },
                     lifestyleId: {
-                        type: DataTypes.INTEGER(10),
+                        type: Sequelize.INTEGER(10),
                         allowNull: false
                     }
                 }, {
@@ -59,28 +59,28 @@ module.exports = {
                 })
             ),
 
-    down: (queryInterface, DataTypes) =>
-        queryInterface.dropTable("lifestyle")
+    down: (QueryInterface, Sequelize) =>
+        QueryInterface.dropTable("lifestyle")
             .then(() =>
-                queryInterface.createTable("lifestyle", {
+                QueryInterface.createTable("lifestyle", {
                     lifestyleDate: {
-                        type: DataTypes.DATEONLY,
+                        type: Sequelize.DATEONLY,
                         allowNull: false,
                         primaryKey: true,
-                        defaultValue: DataTypes.NOW
+                        defaultValue: Sequelize.NOW
                     },
                     water: {
-                        type: DataTypes.INTEGER(2),
+                        type: Sequelize.INTEGER(2),
                         allowNull: false,
                         defaultValue: 0
                     },
                     standing: {
-                        type: DataTypes.INTEGER(2),
+                        type: Sequelize.INTEGER(2),
                         allowNull: false,
                         defaultValue: 0
                     },
                     workout: {
-                        type: DataTypes.INTEGER(2),
+                        type: Sequelize.INTEGER(2),
                         allowNull: false,
                         defaultValue: 0
                     }
@@ -92,18 +92,18 @@ module.exports = {
                 })
             )
             .then(() =>
-                queryInterface.dropTable("lifestyleHistory")
+                QueryInterface.dropTable("lifestyleHistory")
             )
             .then(() =>
-                queryInterface.createTable("lifestyleHistory", {
+                QueryInterface.createTable("lifestyleHistory", {
                     lifestyleHistoryDate: {
-                        type: DataTypes.DATE,
+                        type: Sequelize.DATE,
                         allowNull: false,
                         primaryKey: true,
-                        defaultValue: DataTypes.literal("CURRENT_TIMESTAMP")
+                        defaultValue: Sequelize.NOW
                     },
                     lifestyleType: {
-                        type: DataTypes.STRING(20),
+                        type: Sequelize.STRING(20),
                         allowNull: false
                     }
                 }, {

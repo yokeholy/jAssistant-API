@@ -1,5 +1,5 @@
-module.exports = function (queryInterface, Sequelize) {
-    const loginSession = queryInterface.define("loginSession", {
+module.exports = function (QueryInterface, Sequelize) {
+    const loginSession = QueryInterface.define("loginSession", {
         loginSessionId: {
             type: Sequelize.INTEGER(10),
             allowNull: false,
@@ -17,7 +17,7 @@ module.exports = function (queryInterface, Sequelize) {
         sessionTime: {
             type: Sequelize.DATE,
             allowNull: false,
-            defaultValue: queryInterface.literal("CURRENT_TIMESTAMP")
+            defaultValue: Sequelize.NOW
         }
     }, {
         tableName: "loginSession",

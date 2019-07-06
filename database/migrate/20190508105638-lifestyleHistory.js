@@ -1,13 +1,13 @@
 "use strict";
 
 module.exports = {
-    up: (queryInterface, Sequelize) =>
-        queryInterface.createTable("lifestyleHistory", {
+    up: (QueryInterface, Sequelize) =>
+        QueryInterface.createTable("lifestyleHistory", {
             lifestyleHistoryDate: {
                 type: Sequelize.DATE,
                 allowNull: false,
                 primaryKey: true,
-                defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+                defaultValue: Sequelize.NOW
             },
             lifestyleType: {
                 type: Sequelize.STRING(20),
@@ -20,5 +20,5 @@ module.exports = {
             collate: "utf8_unicode_ci"
         }),
 
-    down: queryInterface => queryInterface.dropTable("lifestyleHistory")
+    down: QueryInterface => QueryInterface.dropTable("lifestyleHistory")
 };
