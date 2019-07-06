@@ -22,7 +22,7 @@ module.exports = {
                 .then(data => {
                     lifestyleSettings = data;
                     return TodoCategory.findAll({
-                        attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Todo.TodoId")), "todoCount"]],
+                        attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("todo.TodoId")), "todoCount"]],
                         where: {
                             todoCategoryStatus: true
                         },

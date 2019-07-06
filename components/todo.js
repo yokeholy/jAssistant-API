@@ -11,7 +11,7 @@ module.exports = {
         let categoryList = [];
         sequelizeInstance.transaction(t =>
             TodoCategory.findAll({
-                attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Todo.TodoId")), "todoCount"]],
+                attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("todo.TodoId")), "todoCount"]],
                 where: {
                     todoCategoryStatus: true
                 },
@@ -30,7 +30,7 @@ module.exports = {
                 .then(categoryData => {
                     categoryList = categoryData;
                     return Todo.findAll({
-                        attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("Comment.commentId")), "commentCount"]],
+                        attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("comment.commentId")), "commentCount"]],
                         where: {
                             [Sequelize.Op.or]: [
                                 {todoStatus: false},

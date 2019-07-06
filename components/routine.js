@@ -12,7 +12,7 @@ module.exports = {
             attributes: [
                 "*",
                 Sequelize.literal("IF(DATEDIFF(CURRENT_TIMESTAMP, routineLastCheckInDate) < 1, 1, 0) AS routineCheckedIn"),
-                [Sequelize.fn("COUNT", Sequelize.col("Comment.commentId")), "commentCount"]
+                [Sequelize.fn("COUNT", Sequelize.col("comment.commentId")), "commentCount"]
             ],
             where: {
                 routineActive: true
