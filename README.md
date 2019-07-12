@@ -23,9 +23,8 @@ Put your SSL certificate and private key in the `ssl` folder and point to them c
 
 ### 3. Populate your database structure by running `sequelize db:migrate`
 
-#### 3.1. Go to your database and insert two records:
-In User table, insert a new user for yourself. `Password` should be a bcrypt hash value.
-In TodoCategory table, insert a new todo category, giving the todoCategoryId 1.
+#### 3.1. Go to your database and insert:
+In `user` table, insert a new user for yourself. `password` should be a bcrypt hash value.
 
 ### 4. Run `npm run dev`
 
