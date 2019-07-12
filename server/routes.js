@@ -26,7 +26,8 @@ module.exports = function (server) {
         .get("/note/getNotes", userAuthentication, note.getNotes)
         .post("/note/createNote", userAuthentication, note.createNote)
         .post("/note/updateNote", userAuthentication, note.updateNote)
-        .post("/note/archiveNote", userAuthentication, note.archiveNote);
+        .post("/note/archiveNote", userAuthentication, note.archiveNote)
+        .get("/note/getArchivedNotes", userAuthentication, note.getArchivedNotes);
     // Routine
     server
         .get("/routine/getRoutineList", userAuthentication, routine.getRoutineList)
