@@ -25,6 +25,7 @@
         "pino": "^5.12.6",
         "q": "^1.5.1",
         "sequelize": "^5.10.0",
-        "sequelize-cli": "^5.5.0"
+        "sequelize-cli": "^5.5.0",
+        "lodash": ">=4.17.13"
     }
 }
