@@ -59,5 +59,19 @@ module.exports = {
             .then(() =>
                 output.apiOutput(res, true)
             );
+    },
+    getArchivedNotes (req, res) {
+        Note.findAll({
+            where: {
+                noteArchived: true
+            },
+            order: [
+                ["noteId", "DESC"]
+            ],
+            raw: true
+        })
+            .then(data =>
+                output.apiOutput(res, data ? { archivedNoteList: data } : [])
+            );
     }
 };
