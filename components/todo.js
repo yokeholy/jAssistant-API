@@ -110,7 +110,8 @@ module.exports = {
     updateTodoItem (req, res) {
         if (req.body.todoId && req.body.todoName) {
             Todo.update({
-                todoName: req.body.todoName
+                todoName: req.body.todoName,
+                todoUpdatedDate: new Date()
             }, {
                 where: {
                     todoId: req.body.todoId
@@ -127,7 +128,7 @@ module.exports = {
         if (req.body.todoId) {
             Todo.update({
                 todoStatus: Sequelize.literal("NOT todoStatus"),
-                todoUpdatedDate: Sequelize.literal("CURRENT_TIMESTAMP")
+                todoUpdatedDate: new Date()
             }, {
                 where: {
                     todoId: req.body.todoId
@@ -144,7 +145,8 @@ module.exports = {
         if (req.body.todoId) {
             Todo.destroy({
                 where: {
-                    todoId: req.body.todoId
+                    todoId: req.body.todoId,
+                    todoUpdatedDate: new Date()
                 }
             })
                 .then(() =>
