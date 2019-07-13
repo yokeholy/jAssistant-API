@@ -52,7 +52,7 @@ module.exports = {
         if (req.body) {
             const setting = req.body;
             if (setting.lifestyleId) {
-                req.body.lifestyleUpdatedDate = Sequelize.literal("NOW()");
+                req.body.lifestyleUpdatedDate = new Date();
                 // This is an exiting lifestyle item, update the setting instead of creating a new one
                 Lifestyle.update(req.body, {
                     where: {
@@ -96,7 +96,7 @@ module.exports = {
         if (req.body) {
             const setting = req.body;
             if (setting.todoCategoryId) {
-                req.body.todoCategoryUpdatedDate = Sequelize.literal("NOW()");
+                req.body.todoCategoryUpdatedDate = new Date();
                 // This is an exiting todoCategory item, update the setting instead of creating a new one
                 TodoCategory.update(req.body, {
                     where: {
@@ -134,7 +134,8 @@ module.exports = {
                         return output.error(res, "This Todo Category has more than 0 unfinished Todo items. Thus deleting it is not allowed.");
                     } else {
                         return TodoCategory.update({
-                            todoCategoryStatus: false
+                            todoCategoryStatus: false,
+                            todoCategoryUpdatedDate: new Date()
                         }, {
                             where: {
                                 todoCategoryId: req.body.todoCategoryId
