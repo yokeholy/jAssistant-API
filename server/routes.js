@@ -20,7 +20,8 @@ module.exports = function (server) {
         .post("/todo/createTodoItem", userAuthentication, todo.createTodoItem)
         .post("/todo/updateTodoItem", userAuthentication, todo.updateTodoItem)
         .post("/todo/toggleTodoStatus", userAuthentication, todo.toggleTodoStatus)
-        .post("/todo/deleteTodo", userAuthentication, todo.deleteTodo);
+        .post("/todo/deleteTodo", userAuthentication, todo.deleteTodo)
+        .get("/todo/getDoneTodoList", userAuthentication, todo.getDoneTodoList);
     // Note
     server
         .get("/note/getNotes", userAuthentication, note.getNotes)
