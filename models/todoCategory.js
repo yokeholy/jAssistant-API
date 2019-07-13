@@ -14,6 +14,15 @@ module.exports = function (QueryInterface, Sequelize) {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: true
+        },
+        todoCategoryCreatedDate: {
+            type: Sequelize.DATE,
+            allowNull: false,
+            defaultValue: Sequelize.NOW
+        },
+        todoCategoryUpdatedDate: {
+            type: Sequelize.DATE,
+            allowNull: true
         }
     }, {
         tableName: "todoCategory",
