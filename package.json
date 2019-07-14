@@ -3,11 +3,10 @@
     "version": "1.0.0",
     "description": "API for jAssistant",
     "private": true,
-    "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "NODE_ENV=production pm2 start --name j-assistant-api server/main.js",
-        "dev": "pm2 delete j-assistant-api;NODE_ENV=production  pm2 start --name j-assistant-api server/main.js --watch"
+        "start": "pm2 delete $npm_package_name; pm2 start server/jAssistantProcess.json",
+        "dev": "pm2 delete $npm_package_name; pm2 start server/jAssistantProcess.json --watch"
     },
     "author": "Jin Wang",
     "license": "ISC",
@@ -17,6 +16,7 @@
         "cron": "^1.7.1",
         "csvtojson": "^2.0.10",
         "express": "^4.17.1",
+        "lodash": ">=4.17.13",
         "md5": "^2.2.1",
         "moment": "^2.24.0",
         "mysql2": "^1.6.5",
@@ -24,8 +24,7 @@
         "pg": "^7.11.0",
         "pino": "^5.12.6",
         "q": "^1.5.1",
-        "sequelize": "^5.10.0",
-        "sequelize-cli": "^5.5.0",
-        "lodash": ">=4.17.13"
+        "sequelize": "^5.10.1",
+        "sequelize-cli": "^5.5.0"
     }
 }
