@@ -1,0 +1,9 @@
+{
+    "script": "./server/main.js",
+    "ignore_watch": [".git", "node_modules", "ssl"],
+    "watch_options": {
+        "followSymlinks": false
+    },
+    "name": "j-assistant-api",
+    "env": {"NODE_ENV": "production" }
+}
