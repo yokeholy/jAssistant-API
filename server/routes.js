@@ -14,6 +14,7 @@ module.exports = function (server) {
     // Account
     server
         .post("/account/login", account.login);
+
     // TodoList
     server
         .get("/todo/getTodoList", userAuthentication, todo.getTodoList)
@@ -22,6 +23,7 @@ module.exports = function (server) {
         .post("/todo/toggleTodoStatus", userAuthentication, todo.toggleTodoStatus)
         .post("/todo/deleteTodo", userAuthentication, todo.deleteTodo)
         .get("/todo/getDoneTodoList", userAuthentication, todo.getDoneTodoList);
+
     // Note
     server
         .get("/note/getNotes", userAuthentication, note.getNotes)
@@ -29,6 +31,7 @@ module.exports = function (server) {
         .post("/note/updateNote", userAuthentication, note.updateNote)
         .post("/note/archiveNote", userAuthentication, note.archiveNote)
         .get("/note/getArchivedNotes", userAuthentication, note.getArchivedNotes);
+
     // Routine
     server
         .get("/routine/getRoutineList", userAuthentication, routine.getRoutineList)
@@ -36,20 +39,24 @@ module.exports = function (server) {
         .post("/routine/updateRoutine", userAuthentication, routine.updateRoutine)
         .post("/routine/checkInRoutine", userAuthentication, routine.checkInRoutine)
         .post("/routine/deleteRoutine", userAuthentication, routine.deleteRoutine);
+
     // Comment
     server
         .post("/comment/getCommentList", userAuthentication, comment.getCommentList)
         .post("/comment/createComment", userAuthentication, comment.createComment)
         .post("/comment/deleteComment", userAuthentication, comment.deleteComment);
+
     // Lifestyle
     server
         .get("/lifestyle/getLifestyle", userAuthentication, lifestyle.getLifestyle)
         .post("/lifestyle/upLifestyle", userAuthentication, lifestyle.upLifestyle);
+
     // Settings
     server
         .get("/settings/getAllSettings", userAuthentication, settings.getAllSettings)
         .post("/settings/saveLifestyleSetting", userAuthentication, settings.saveLifestyleSetting)
         .post("/settings/deleteLifestyleSetting", userAuthentication, settings.deleteLifestyleSetting)
         .post("/settings/saveTodoCategorySetting", userAuthentication, settings.saveTodoCategorySetting)
-        .post("/settings/deleteTodoCategorySetting", userAuthentication, settings.deleteTodoCategorySetting);
+        .post("/settings/deleteTodoCategorySetting", userAuthentication, settings.deleteTodoCategorySetting)
+        .post("/settings/saveGeneralSettings", userAuthentication, settings.saveGeneralSettings);
 };
