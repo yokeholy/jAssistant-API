@@ -5,20 +5,39 @@ const Sequelize = require("sequelize");
 const sequelizeInstance = require("../models").database;
 
 const Content = require("../config/content");
-const {lifestyle: Lifestyle, todoCategory: TodoCategory, todo: Todo} = require("../models");
+const {
+    lifestyle: Lifestyle,
+    todoCategory: TodoCategory,
+    settings: Settings,
+    todo: Todo
+} = require("../models");
 
 module.exports = {
     getAllSettings (req, res) {
         let contentSettings = Content;
+        let generalSettings;
         let lifestyleSettings;
         sequelizeInstance.transaction(t =>
-            Lifestyle.findAll({
+            Settings.findOrCreate({
                 where: {
-                    lifestyleStatus: true
+                    settingsName: "appName"
                 },
-                transaction: t,
-                raw: true
+                defaults: {
+                    settingsName: "appName",
+                    settingsValue: "jAssistant"
+                },
+                transaction: t
             })
+                .then(([generalSettingsData]) => {
+                    generalSettings = [generalSettingsData];
+                    return Lifestyle.findAll({
+                        where: {
+                            lifestyleStatus: true
+                        },
+                        transaction: t,
+                        raw: true
+                    });
+                })
                 .then(data => {
                     lifestyleSettings = data;
                     return TodoCategory.findAll({
@@ -41,6 +60,7 @@ module.exports = {
                 })
                 .then(todoCategoryData =>
                     output.apiOutput(res, {
+                        generalSettings,
                         lifestyleSettings,
                         contentSettings,
                         todoCategorySettings: todoCategoryData
@@ -148,6 +168,25 @@ module.exports = {
                 });
         } else {
             return output.error(res, "Please provide Todo Category Settings data.");
+        }
+    },
+    saveGeneralSettings (req, res) {
+        if (req.body.length) {
+            const settings = req.body;
+            return Promise.all(settings.map(settingItem =>
+                Settings.update({
+                    settingsValue: settingItem.settingsValue
+                }, {
+                    where: {
+                        settingsName: settingItem.settingsName
+                    }
+                })
+            ))
+                .then(data =>
+                    output.apiOutput(res, data)
+                );
+        } else {
+            return output.error(res, "Please provide Settings data.");
         }
     }
 };
