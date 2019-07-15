@@ -2,11 +2,11 @@
 
 const output = require("../services/output");
 const Sequelize = require("sequelize");
-const sequelizeInstance = require("../models").database;
+const sequelizeInstance = require("../database/models").database;
 
 const Content = require("../config/content");
 
-const {lifestyle: Lifestyle, lifestyleHistory: LifestyleHistory} = require("../models");
+const {lifestyle: Lifestyle, lifestyleHistory: LifestyleHistory} = require("../database/models");
 
 module.exports = {
     getLifestyle (req, res) {

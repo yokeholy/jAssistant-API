@@ -1,8 +1,8 @@
 "use strict";
 
-const ModelsLoader = require("../utils/ModelsLoader");
+const ModelsLoader = require("../../utils/ModelsLoader");
 const Sequelize = require("sequelize");
-const config = require("../config/database.json");
+const config = require("../../config/database.json");
 const log = require("pino")();
 if (config) {
     const sequelize = new Sequelize(

@@ -2,9 +2,9 @@
 
 const output = require("../services/output");
 const Sequelize = require("sequelize");
-const sequelizeInstance = require("../models").database;
+const sequelizeInstance = require("../database/models").database;
 
-const {routine: Routine, routineHistory: RoutineHistory, comment: Comment} = require("../models");
+const {routine: Routine, routineHistory: RoutineHistory, comment: Comment} = require("../database/models");
 
 module.exports = {
     getRoutineList (req, res) {

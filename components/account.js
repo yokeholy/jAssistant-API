@@ -3,9 +3,9 @@ var md5 = require("md5");
 var bcrypt = require("bcrypt");
 
 const output = require("../services/output");
-const sequelizeInstance = require("../models").database;
+const sequelizeInstance = require("../database/models").database;
 
-const {user: User, loginSession: LoginSession} = require("../models");
+const {user: User, loginSession: LoginSession} = require("../database/models");
 
 module.exports = {
     login (req, res) {

@@ -3,7 +3,7 @@
 const output = require("../services/output");
 const Sequelize = require("sequelize");
 
-const {note: Note} = require("../models");
+const {note: Note} = require("../database/models");
 
 module.exports = {
     getNotes (req, res) {
