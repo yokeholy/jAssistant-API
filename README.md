@@ -7,8 +7,8 @@ Your personal life management assistant
 
 You will need the following to be set up before you can run jAssistant
 
-- `pm2` and `sequelize-cli` installed to run this API.
-To install, run `npm install -g pm2 sequelize-cli`
+- `pm2` installed to run this API.
+To install, run `npm install -g pm2`
 - A running `mysql` server and create an empty database to initialize the starting database.
 - SSL certificate and private key for your API server
 
@@ -21,7 +21,7 @@ Also make a copy from `database.sample.json` file and rename it `database.json`.
 Fill in each field in those config files and save it.
 Put your SSL certificate and private key in the `ssl` folder and point to them correctly in your config file.
 
-### 3. Populate your database structure by running `sequelize db:migrate`
+### 3. Populate your database structure by running `npm run migrate`
 
 #### 3.1. Go to your database and insert:
 In `user` table, insert a new user for yourself. `password` should be a bcrypt hash value.

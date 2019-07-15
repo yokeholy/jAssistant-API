@@ -4,7 +4,7 @@
     "description": "API for jAssistant",
     "private": true,
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "migrate": "sequelize db:migrate",
         "start": "pm2 delete $npm_package_name; pm2 start server/jAssistantProcess.json",
         "dev": "pm2 delete $npm_package_name; pm2 start server/jAssistantProcess.json --watch"
     },
@@ -19,12 +19,15 @@
         "lodash": ">=4.17.13",
         "md5": "^2.2.1",
         "moment": "^2.24.0",
-        "mysql2": "^1.6.5",
         "node-localstorage": "^1.3.1",
         "pg": "^7.11.0",
         "pino": "^5.12.6",
         "q": "^1.5.1",
-        "sequelize": "^5.10.1",
+        "sequelize": "^5.10.1"
+    },
+    "devDependencies": {
+        "mysql2": "^1.6.5",
+        "pm2": "^3.5.1",
         "sequelize-cli": "^5.5.0"
     }
 }

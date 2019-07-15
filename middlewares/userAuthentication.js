@@ -1,5 +1,3 @@
-const log = require("pino")();
-
 const output = require("../services/output");
 const {loginSession: LoginSession} = require("../database/models");
 
