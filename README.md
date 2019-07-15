@@ -7,8 +7,6 @@ Your personal life management assistant
 
 You will need the following to be set up before you can run jAssistant
 
-- `pm2` installed to run this API.
-To install, run `npm install -g pm2`
 - A running `mysql` server and create an empty database to initialize the starting database.
 - SSL certificate and private key for your API server
 
@@ -31,5 +29,3 @@ In `user` table, insert a new user for yourself. `password` should be a bcrypt h
 Test jAssistant-API out.
 
 ### 5. When you're ready to deploy it to production, run `npm start`
-
-Builds the app for production to the `build` folder.
