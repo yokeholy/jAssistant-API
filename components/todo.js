@@ -2,9 +2,9 @@
 
 const output = require("../services/output");
 const Sequelize = require("sequelize");
-const sequelizeInstance = require("../models").database;
+const sequelizeInstance = require("../database/models").database;
 
-const {todoCategory: TodoCategory, todo: Todo, comment: Comment} = require("../models");
+const {todoCategory: TodoCategory, todo: Todo, comment: Comment} = require("../database/models");
 
 let _fetchTodoList = (done, res) => {
     let categoryList = [];

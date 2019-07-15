@@ -1,6 +1,6 @@
 module.exports = {
     "config": "config/database.json",
-    "migrations-path": "database/migrate",
-    "models-path": "models",
+    "migrations-path": "database/migrations",
+    "models-path": "database/models",
     "seeders-path": "database/seeds"
 };

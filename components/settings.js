@@ -2,13 +2,13 @@
 
 const output = require("../services/output");
 const Sequelize = require("sequelize");
-const sequelizeInstance = require("../models").database;
+const sequelizeInstance = require("../database/models").database;
 
 const {
     todoCategory: TodoCategory,
     settings: Settings,
     todo: Todo
-} = require("../models");
+} = require("../database/models");
 
 module.exports = {
     getAllSettings (req, res) {

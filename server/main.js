@@ -16,7 +16,7 @@ const listener = https.createServer({
 }, jAssistantAPI)
     .listen(config.port);
 
-require("../models");
+require("../database/models");
 
 process.on("unhandledRejection", error => {
     log.error(`unhandledRejection: ${error.message}`);

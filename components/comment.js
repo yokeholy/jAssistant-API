@@ -2,7 +2,7 @@
 
 const output = require("../services/output");
 
-const {comment: Comment} = require("../models");
+const {comment: Comment} = require("../database/models");
 
 module.exports = {
     getCommentList: (req, res) => {
