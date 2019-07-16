@@ -28,10 +28,17 @@ module.exports = {
             }],
             group: ["routine.routineId"],
             raw: true
-        }).then(data =>
-            output.apiOutput(res, {routineList: data})
-        );
+        }).then(routineData => {
+            for (let i = 0; i < routineData.length; i++) {
+                if (routineData[i].routineFrequencyType === 1) {
+                    // Convert Routine Frequency Value from binary to base-10 string
+                    routineData[i].routineFrequencyValue = routineData[i].routineFrequencyValue.toString(2).padStart(7, "0");
+                }
+            }
+            return output.apiOutput(res, {routineList: routineData});
+        });
     },
+
     createRoutine (req, res) {
         // Validation
         if (req.body.newRoutine) {
@@ -45,6 +52,7 @@ module.exports = {
             output.error(res, "Please provide the Routine Name.");
         }
     },
+
     updateRoutine (req, res) {
         if (req.body.routineId && req.body.routineName) {
             Routine.update({
@@ -61,6 +69,7 @@ module.exports = {
             output.error(res, "Please provide the Routine ID.");
         }
     },
+
     checkInRoutine (req, res) {
         if (req.body.routineId) {
             // Check if this routine has been checked in today already
@@ -99,6 +108,7 @@ module.exports = {
             output.error(res, "Please provide the Routine ID.");
         }
     },
+
     deleteRoutine (req, res) {
         if (req.body.routineId) {
             Routine.update({
