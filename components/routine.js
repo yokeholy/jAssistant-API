@@ -31,7 +31,7 @@ module.exports = {
         }).then(routineData => {
             for (let i = 0; i < routineData.length; i++) {
                 if (routineData[i].routineFrequencyType === 1) {
-                    // Convert Routine Frequency Value from binary to base-10 string
+                    // Convert Routine Frequency Value from base-10 to binary string
                     routineData[i].routineFrequencyValue = routineData[i].routineFrequencyValue.toString(2).padStart(7, "0");
                 }
             }
@@ -67,6 +67,34 @@ module.exports = {
                 );
         } else {
             output.error(res, "Please provide the Routine ID.");
+        }
+    },
+
+    updateRoutineConfig (req, res) {
+        if (req.body.routineId && req.body.frequencyConfig) {
+            let routineFrequencyType = req.body.frequencyConfig.periodType;
+            let routineFrequencyValue;
+            if (routineFrequencyType === 1) {
+                // Convert Routine Frequency Value from binary string to base-10 integer
+                routineFrequencyValue = parseInt(req.body.frequencyConfig.dailyFrequency, 2);
+            } else if (routineFrequencyType === 2) {
+                routineFrequencyValue = req.body.frequencyConfig.weeklyDay;
+            } else if (routineFrequencyType === 3) {
+                routineFrequencyValue = req.body.frequencyConfig.monthlyDay;
+            }
+            Routine.update({
+                routineFrequencyType,
+                routineFrequencyValue
+            }, {
+                where: {
+                    routineId: req.body.routineId
+                }
+            })
+                .then(() =>
+                    output.apiOutput(res, true)
+                );
+        } else {
+            output.error(res, "Please provide the Routine ID and Routine Config data.");
         }
     },
 
