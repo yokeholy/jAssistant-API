@@ -4,7 +4,33 @@ const output = require("../services/output");
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../database/models").database;
 
+const moment = require("moment");
+
 const {routine: Routine, routineHistory: RoutineHistory, comment: Comment} = require("../database/models");
+
+const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate) => {
+    if (!lastCheckInDate) {
+        return 0;
+    } else {
+        let today = moment(new Date()).startOf("day");
+        let now = moment(new Date());
+        lastCheckInDate = moment(lastCheckInDate).startOf("day");
+
+        switch (frequencyType) {
+        // Monthly routine
+        case 3:
+            // Get the next due day
+            let nextDueMonth = lastCheckInDate.date() <= frequencyValue ? 1 : 2;
+            let nextDueDay = lastCheckInDate.date(frequencyValue).add(nextDueMonth, "M");
+            if (today <= nextDueDay) {
+                return moment.duration(nextDueDay.endOf("day").diff(now)).asSeconds();
+            } else if (today > nextDueDay) {
+                return 0;
+            }
+            break;
+        }
+    }
+};
 
 module.exports = {
     getRoutineList (req, res) {
@@ -30,10 +56,13 @@ module.exports = {
             raw: true
         }).then(routineData => {
             for (let i = 0; i < routineData.length; i++) {
-                if (routineData[i].routineFrequencyType === 1) {
+                let routine = routineData[i];
+                if (routine.routineFrequencyType === 1) {
                     // Convert Routine Frequency Value from base-10 to binary string
-                    routineData[i].routineFrequencyValue = routineData[i].routineFrequencyValue.toString(2).padStart(7, "0");
+                    routine.routineFrequencyValue = routine.routineFrequencyValue.toString(2).padStart(7, "0");
                 }
+                // Get the next due day in seconds (for countdown purposes in the UI)
+                routine.nextDueDayCountdown = _getNextDueDayCountdown(routine.routineFrequencyType, routine.routineFrequencyValue, routine.routineLastCheckInDate);
             }
             return output.apiOutput(res, {routineList: routineData});
         });
