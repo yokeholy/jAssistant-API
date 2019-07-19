@@ -15,7 +15,12 @@ module.exports = function (QueryInterface, Sequelize) {
             type: Sequelize.STRING(100),
             allowNull: false
         },
-        todoStatus: {
+        todoDone: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
+        todoDeleted: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false
