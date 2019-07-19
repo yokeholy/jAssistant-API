@@ -40,6 +40,25 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
                 return 0;
             }
             break;
+        // Weekly routine
+        case 1:
+            // Translate frequency value into an array of days of the week
+            let frequencyDays = [];
+            let frequencyArray = frequencyValue.split("");
+            for (let i = 0; i < frequencyArray.length; i++) {
+                frequencyDays.push(parseInt(frequencyArray[i], 10));
+            }
+            while (!frequencyDays[lastCheckInDate.day()]) {
+                lastCheckInDate.date(lastCheckInDate.date() + 1);
+            }
+            // Get the next due day
+            nextDueDay = lastCheckInDate;
+            if (today <= nextDueDay) {
+                return moment.duration(nextDueDay.endOf("day").diff(now)).asSeconds();
+            } else if (today > nextDueDay) {
+                return 0;
+            }
+            break;
         }
     }
 };
