@@ -37,6 +37,7 @@ module.exports = function (server) {
         .get("/routine/getRoutineList", userAuthentication, routine.getRoutineList)
         .post("/routine/createRoutine", userAuthentication, routine.createRoutine)
         .post("/routine/updateRoutine", userAuthentication, routine.updateRoutine)
+        .post("/routine/updateRoutineConfig", userAuthentication, routine.updateRoutineConfig)
         .post("/routine/checkInRoutine", userAuthentication, routine.checkInRoutine)
         .post("/routine/deleteRoutine", userAuthentication, routine.deleteRoutine);
 
