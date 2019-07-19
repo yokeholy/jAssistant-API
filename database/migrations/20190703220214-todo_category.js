@@ -2,7 +2,6 @@
 
 module.exports = {
     up: (QueryInterface, Sequelize) =>
-        // TODO: Add default category Id 1
         QueryInterface.createTable("todoCategory", {
             todoCategoryId: {
                 type: Sequelize.INTEGER(100),
@@ -24,7 +23,12 @@ module.exports = {
             timestamps: false,
             charset: "utf8",
             collate: "utf8_unicode_ci"
-        }),
+        })
+            .then(() =>
+                QueryInterface.bulkInsert("todoCategory", [{
+                    todoCategoryName: "Default"
+                }])
+            ),
 
     down: QueryInterface => QueryInterface.dropTable("todoCategory")
 };
