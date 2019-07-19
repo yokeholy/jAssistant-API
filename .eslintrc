@@ -161,6 +161,7 @@
         "lines-around-comment": 0,
         "max-depth": 1,
         "max-len": [1, {
+            "code": 120,
             "ignoreComments": true,
             "ignoreStrings": true,
             "ignoreTemplateLiterals": true

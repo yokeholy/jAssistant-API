@@ -15,13 +15,25 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
         let today = moment(new Date()).startOf("day");
         let now = moment(new Date());
         lastCheckInDate = moment(lastCheckInDate).startOf("day");
+        let nextDueDay;
 
         switch (frequencyType) {
         // Monthly routine
         case 3:
             // Get the next due day
             let nextDueMonth = lastCheckInDate.date() <= frequencyValue ? 1 : 2;
-            let nextDueDay = lastCheckInDate.date(frequencyValue).add(nextDueMonth, "M");
+            nextDueDay = lastCheckInDate.date(frequencyValue).add(nextDueMonth, "M");
+            if (today <= nextDueDay) {
+                return moment.duration(nextDueDay.endOf("day").diff(now)).asSeconds();
+            } else if (today > nextDueDay) {
+                return 0;
+            }
+            break;
+        // Weekly routine
+        case 2:
+            // Get the next due day
+            let nextDueWeek = lastCheckInDate.day() <= frequencyValue ? 1 : 2;
+            nextDueDay = lastCheckInDate.day(frequencyValue).add(nextDueWeek, "W");
             if (today <= nextDueDay) {
                 return moment.duration(nextDueDay.endOf("day").diff(now)).asSeconds();
             } else if (today > nextDueDay) {
@@ -62,7 +74,11 @@ module.exports = {
                     routine.routineFrequencyValue = routine.routineFrequencyValue.toString(2).padStart(7, "0");
                 }
                 // Get the next due day in seconds (for countdown purposes in the UI)
-                routine.nextDueDayCountdown = _getNextDueDayCountdown(routine.routineFrequencyType, routine.routineFrequencyValue, routine.routineLastCheckInDate);
+                routine.nextDueDayCountdown = _getNextDueDayCountdown(
+                    routine.routineFrequencyType,
+                    routine.routineFrequencyValue,
+                    routine.routineLastCheckInDate
+                );
             }
             return output.apiOutput(res, {routineList: routineData});
         });
