@@ -35,7 +35,7 @@ module.exports = {
                             model: Todo,
                             attributes: [],
                             where: {
-                                todoStatus: false
+                                todoDone: false
                             },
                             required: false
                         }],
@@ -85,7 +85,7 @@ module.exports = {
             return Todo.count({
                 where: {
                     todoCategoryId: req.body.todoCategoryId,
-                    todoStatus: false
+                    todoDone: false
                 },
                 raw: 1
             })

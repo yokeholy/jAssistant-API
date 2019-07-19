@@ -18,7 +18,7 @@ let _fetchTodoList = (done, res) => {
                 model: Todo,
                 attributes: [],
                 where: done ? 1 : {
-                    todoStatus: false
+                    todoDone: false
                 },
                 required: false
             }],
@@ -32,8 +32,8 @@ let _fetchTodoList = (done, res) => {
                     attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("comment.commentId")), "commentCount"]],
                     where: {
                         [Sequelize.Op.or]: [
-                            {todoStatus: false},
-                            done ? {todoStatus: true} : 1,
+                            {todoDone: false},
+                            done ? {todoDone: true} : 1,
                             Sequelize.literal("DATE(todoUpdatedDate) = CURDATE()"),
                             Sequelize.literal("DATE(todoCreatedDate) = CURDATE()")
                         ]
@@ -127,7 +127,7 @@ module.exports = {
     toggleTodoStatus (req, res) {
         if (req.body.todoId) {
             Todo.update({
-                todoStatus: Sequelize.literal("NOT todoStatus"),
+                todoDone: Sequelize.literal("NOT todoDone"),
                 todoUpdatedDate: new Date()
             }, {
                 where: {
