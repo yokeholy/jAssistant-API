@@ -26,7 +26,7 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
             if (today <= nextDueDay) {
                 return moment.duration(nextDueDay.endOf("day").diff(now)).asSeconds();
             } else if (today > nextDueDay) {
-                return 0;
+                return -1;
             }
             break;
         // Weekly routine
@@ -37,7 +37,7 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
             if (today <= nextDueDay) {
                 return moment.duration(nextDueDay.endOf("day").diff(now)).asSeconds();
             } else if (today > nextDueDay) {
-                return 0;
+                return -1;
             }
             break;
         // Weekly routine
@@ -56,7 +56,7 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
             if (today <= nextDueDay) {
                 return moment.duration(nextDueDay.endOf("day").diff(now)).asSeconds();
             } else if (today > nextDueDay) {
-                return 0;
+                return -1;
             }
             break;
         }
@@ -98,6 +98,7 @@ module.exports = {
                     routine.routineFrequencyValue,
                     routine.routineLastCheckInDate
                 );
+                routine.routineConsecutive = routine.nextDueDayCountdown > 0 ? routine.routineConsecutive : 0;
             }
             return output.apiOutput(res, {routineList: routineData});
         });
