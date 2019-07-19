@@ -14,18 +14,12 @@ module.exports = {
     getAllSettings (req, res) {
         let generalSettings;
         sequelizeInstance.transaction(t =>
-            Settings.findOrCreate({
-                where: {
-                    settingsName: "appName"
-                },
-                defaults: {
-                    settingsName: "appName",
-                    settingsValue: "jAssistant"
-                },
-                transaction: t
+            Settings.findAll({
+                transaction: t,
+                raw: true
             })
-                .then(([generalSettingsData]) => {
-                    generalSettings = [generalSettingsData];
+                .then(generalSettingsData => {
+                    generalSettings = generalSettingsData;
                     return TodoCategory.findAll({
                         attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("todo.TodoId")), "todoCount"]],
                         where: {
@@ -52,6 +46,7 @@ module.exports = {
                 )
         );
     },
+
     saveTodoCategorySetting (req, res) {
         if (req.body) {
             const setting = req.body;
@@ -80,6 +75,7 @@ module.exports = {
             output.error(res, "Please provide Todo Category Settings data.");
         }
     },
+
     deleteTodoCategorySetting (req, res) {
         if (req.body.todoCategoryId) {
             return Todo.count({
@@ -110,6 +106,7 @@ module.exports = {
             return output.error(res, "Please provide Todo Category Settings data.");
         }
     },
+
     saveGeneralSettings (req, res) {
         if (req.body.length) {
             const settings = req.body;
