@@ -17,9 +17,14 @@ let _fetchTodoList = (done, res) => {
             include: [{
                 model: Todo,
                 attributes: [],
-                where: done ? 1 : {
-                    todoDone: false
-                },
+                where: done
+                    ? {
+                        todoDeleted: false
+                    }
+                    : {
+                        todoDone: false,
+                        todoDeleted: false
+                    },
                 required: false
             }],
             group: ["todoCategory.todoCategoryId"],
@@ -36,7 +41,8 @@ let _fetchTodoList = (done, res) => {
                             done ? {todoDone: true} : 1,
                             Sequelize.literal("DATE(todoUpdatedDate) = CURDATE()"),
                             Sequelize.literal("DATE(todoCreatedDate) = CURDATE()")
-                        ]
+                        ],
+                        todoDeleted: false
                     },
                     include: [{
                         model: Comment,
@@ -92,6 +98,7 @@ module.exports = {
     getTodoList (req, res) {
         return _fetchTodoList(false, res);
     },
+
     createTodoItem (req, res) {
         // Validation
         if (req.body.itemName) {
@@ -107,6 +114,7 @@ module.exports = {
             output.error(res, "Please provide the Todo Item name.");
         }
     },
+
     updateTodoItem (req, res) {
         if (req.body.todoId && req.body.todoName) {
             Todo.update({
@@ -124,6 +132,7 @@ module.exports = {
             output.error(res, "Please provide the Todo Item ID.");
         }
     },
+
     toggleTodoStatus (req, res) {
         if (req.body.todoId) {
             Todo.update({
@@ -141,12 +150,16 @@ module.exports = {
             output.error(res, "Please provide the Todo Item ID.");
         }
     },
+
     deleteTodo (req, res) {
         if (req.body.todoId) {
-            Todo.destroy({
+            Todo.update({
+                todoDeleted: true,
+                todoUpdatedDate: new Date()
+            },
+            {
                 where: {
-                    todoId: req.body.todoId,
-                    todoUpdatedDate: new Date()
+                    todoId: req.body.todoId
                 }
             })
                 .then(() =>
@@ -156,6 +169,7 @@ module.exports = {
             output.error(res, "Please provide the Todo Item ID.");
         }
     },
+
     getDoneTodoList (req, res) {
         return _fetchTodoList(true, res);
     }
