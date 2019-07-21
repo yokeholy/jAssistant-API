@@ -64,8 +64,7 @@ module.exports = {
             } else {
                 // This is a new todoCategory item, create it
                 TodoCategory.create({
-                    todoCategoryName: setting.todoCategoryName,
-                    todoCategoryDailyValue: setting.todoCategoryDailyValue
+                    todoCategoryName: setting.todoCategoryName
                 })
                     .then(data => {
                         output.apiOutput(res, data);
