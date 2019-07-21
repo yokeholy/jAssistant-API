@@ -4,14 +4,17 @@ module.exports = {
     up: (QueryInterface, Sequelize) =>
         QueryInterface.sequelize.transaction(t =>
             // Clear everything in SequelizeMeta
-            QueryInterface.sequelize.query("SELECT * FROM `SequelizeMeta`;", {
+            QueryInterface.sequelize.query("SELECT COUNT(*) AS migrationCount FROM `SequelizeMeta`;", {
+                type: Sequelize.QueryTypes.SELECT,
                 transaction: t,
                 raw: true
             })
                 .then(sequelizeMigrationData => {
-                    if (sequelizeMigrationData) {
+                    if (sequelizeMigrationData[0].migrationCount) {
+                        // If this jAssistant instance is upgrading from an eralier version, just reset the SequelizeMeta database without making any changes.
                         return QueryInterface.sequelize.query("TRUNCATE `SequelizeMeta`;", {transaction: t});
                     } else {
+                        // If this is a new jAssistant instance, populate all necessary databases and initialize data.
                         return Promise.all([
                             // Insert tables that jAssistant required
                             QueryInterface.createTable("todo",
