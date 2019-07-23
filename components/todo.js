@@ -7,13 +7,11 @@ const sequelizeInstance = require("../database/models").database;
 const {
     todoCategory: TodoCategory,
     todo: Todo,
-    comment: Comment,
-    settings: Settings
+    comment: Comment
 } = require("../database/models");
 
 let _fetchTodoList = (done, res) => {
     let categoryList = [];
-    let todoSettings = {};
     sequelizeInstance.transaction(t =>
         TodoCategory.findAll({
             attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("todo.TodoId")), "todoCount"]],
@@ -39,19 +37,6 @@ let _fetchTodoList = (done, res) => {
         })
             .then(categoryData => {
                 categoryList = categoryData;
-                return Settings.findAll({
-                    transaction: t,
-                    raw: true
-                });
-            })
-            .then(settingsData => {
-                for (let i = 0; i < settingsData.length; i++) {
-                    if (settingsData[i].settingsName === "todoAlertLevel") {
-                        todoSettings.todoAlertLevel = parseInt(settingsData[i].settingsValue, 10);
-                    } else if (settingsData[i].settingsName === "todoDangerLevel") {
-                        todoSettings.todoDangerLevel = parseInt(settingsData[i].settingsValue, 10);
-                    }
-                }
                 return Todo.findAll({
                     attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("comment.commentId")), "commentCount"]],
                     where: {
@@ -109,8 +94,7 @@ let _fetchTodoList = (done, res) => {
                     }
                 }
                 return output.apiOutput(res, {
-                    todoCategoryList: categoryList,
-                    todoSettings
+                    todoCategoryList: categoryList
                 });
             })
     );
