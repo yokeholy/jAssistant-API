@@ -1,6 +1,5 @@
-"use strict";
-
-const currentVersion = "1.0.0";
+const packageJson = require("../package.json");
+const currentVersion = packageJson.version;
 const log = require("pino")();
 
 module.exports = {

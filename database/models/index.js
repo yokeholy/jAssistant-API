@@ -1,5 +1,3 @@
-"use strict";
-
 const ModelsLoader = require("../../utils/ModelsLoader");
 const Sequelize = require("sequelize");
 const config = require("../../config/database.json");

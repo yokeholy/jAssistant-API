@@ -1,5 +1,3 @@
-"use strict";
-
 const output = require("../services/output");
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../database/models").database;

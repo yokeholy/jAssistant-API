@@ -1,5 +1,3 @@
-"use strict";
-
 module.exports = {
     up: (QueryInterface, Sequelize) =>
         QueryInterface.sequelize.transaction(t =>

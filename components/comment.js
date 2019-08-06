@@ -1,5 +1,3 @@
-"use strict";
-
 const output = require("../services/output");
 
 const {comment: Comment} = require("../database/models");
