@@ -1,5 +1,3 @@
-"use strict";
-
 const userAuthentication = require("../middlewares/userAuthentication");
 
 const account = require("../components/account");

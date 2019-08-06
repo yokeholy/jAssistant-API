@@ -1,5 +1,3 @@
-"use strict";
-
 const cron = require("cron").CronJob;
 const log = require("pino")();
 

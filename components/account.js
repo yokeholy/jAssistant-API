@@ -1,6 +1,5 @@
-"use strict";
-var md5 = require("md5");
-var bcrypt = require("bcrypt");
+const md5 = require("md5");
+const bcrypt = require("bcrypt");
 
 const output = require("../services/output");
 const sequelizeInstance = require("../database/models").database;
