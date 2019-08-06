@@ -13,6 +13,7 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
         let today = moment(new Date()).startOf("day");
         let now = moment(new Date());
         lastCheckInDate = moment(lastCheckInDate).startOf("day");
+        let checkedInToday = today.format("L") === lastCheckInDate.format("L");
         let nextDueDay;
 
         switch (frequencyType) {
@@ -38,7 +39,7 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
                 return -1;
             }
             break;
-        // Weekly routine
+        // Daily routine
         case 1:
             // Translate frequency value into an array of days of the week
             let frequencyDays = [];
@@ -49,6 +50,12 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
             while (!frequencyDays[lastCheckInDate.day()]) {
                 lastCheckInDate.date(lastCheckInDate.date() + 1);
             }
+
+            // Push one more day if the routine is checked in today
+            if (checkedInToday) {
+                lastCheckInDate.date(lastCheckInDate.date() + 1);
+            }
+
             // Get the next due day
             nextDueDay = lastCheckInDate;
             if (today <= nextDueDay) {
