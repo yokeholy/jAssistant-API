@@ -1,3 +1,4 @@
+const log = require("pino")();
 const output = require("../services/output");
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../database/models").database;
@@ -68,8 +69,27 @@ const _getNextDueDayCountdown = (frequencyType, frequencyValue, lastCheckInDate)
     }
 };
 
+const _verifyRoutineOwnership = (routineId, userId) =>
+    Routine.findAll({
+        where: {
+            ownerId: userId,
+            routineId
+        }
+    })
+        .then(data => {
+            if (data.length) {
+                return Promise.resolve();
+            } else {
+                return Promise.reject("You don't have permission of this Routine.");
+            }
+        })
+        .catch(error => {
+            log.error(`User ${userId} doesn't own Routine ${routineId}: ${error}`);
+            return Promise.reject(error);
+        });
+
 module.exports = {
-    getRoutineList (req, res) {
+    getRoutineList: (req, res) => {
         Routine.findAll({
             attributes: [
                 "*",
@@ -77,6 +97,7 @@ module.exports = {
                 [Sequelize.fn("COUNT", Sequelize.col("comment.commentId")), "commentCount"]
             ],
             where: {
+                ownerId: req.userId,
                 routineActive: true
             },
             include: [{
@@ -109,10 +130,11 @@ module.exports = {
         });
     },
 
-    createRoutine (req, res) {
+    createRoutine: (req, res) => {
         // Validation
         if (req.body.newRoutine) {
             Routine.create({
+                ownerId: req.userId,
                 routineName: req.body.newRoutine
             })
                 .then(() =>
@@ -123,66 +145,81 @@ module.exports = {
         }
     },
 
-    updateRoutine (req, res) {
+    updateRoutine: (req, res) => {
         if (req.body.routineId && req.body.routineName) {
-            Routine.update({
-                routineName: req.body.routineName
-            }, {
-                where: {
-                    routineId: req.body.routineId
-                }
-            })
+            return _verifyRoutineOwnership(req.body.routineId, req.userId)
+                .then(() =>
+                    Routine.update({
+                        routineName: req.body.routineName
+                    }, {
+                        where: {
+                            routineId: req.body.routineId
+                        }
+                    })
+                )
                 .then(() =>
                     output.apiOutput(res, true)
+                )
+                .catch(error =>
+                    output.error(res, `Error updating the Routine: ${error}`)
                 );
         } else {
             output.error(res, "Please provide the Routine ID.");
         }
     },
 
-    updateRoutineConfig (req, res) {
+    updateRoutineConfig: (req, res) => {
         if (req.body.routineId && req.body.frequencyConfig) {
-            let routineFrequencyType = req.body.frequencyConfig.periodType;
-            let routineFrequencyValue;
-            if (routineFrequencyType === 1) {
-                // Convert Routine Frequency Value from binary string to base-10 integer
-                routineFrequencyValue = parseInt(req.body.frequencyConfig.dailyFrequency, 2);
-            } else if (routineFrequencyType === 2) {
-                routineFrequencyValue = req.body.frequencyConfig.weeklyDay;
-            } else if (routineFrequencyType === 3) {
-                routineFrequencyValue = req.body.frequencyConfig.monthlyDay;
-            }
-            Routine.update({
-                routineFrequencyType,
-                routineFrequencyValue
-            }, {
-                where: {
-                    routineId: req.body.routineId
-                }
-            })
+            return _verifyRoutineOwnership(req.body.routineId, req.userId)
+                .then(() => {
+                    let routineFrequencyType = req.body.frequencyConfig.periodType;
+                    let routineFrequencyValue;
+                    if (routineFrequencyType === 1) {
+                        // Convert Routine Frequency Value from binary string to base-10 integer
+                        routineFrequencyValue = parseInt(req.body.frequencyConfig.dailyFrequency, 2);
+                    } else if (routineFrequencyType === 2) {
+                        routineFrequencyValue = req.body.frequencyConfig.weeklyDay;
+                    } else if (routineFrequencyType === 3) {
+                        routineFrequencyValue = req.body.frequencyConfig.monthlyDay;
+                    }
+                    return Routine.update({
+                        routineFrequencyType,
+                        routineFrequencyValue
+                    }, {
+                        where: {
+                            routineId: req.body.routineId
+                        }
+                    });
+                })
                 .then(() =>
                     output.apiOutput(res, true)
+                )
+                .catch(error =>
+                    output.error(res, `Error saving the Routine configuration: ${error}`)
                 );
         } else {
             output.error(res, "Please provide the Routine ID and Routine Config data.");
         }
     },
 
-    checkInRoutine (req, res) {
+    checkInRoutine: (req, res) => {
         if (req.body.routineId) {
-            // Check if this routine has been checked in today already
-            Routine.findOne({
-                where: {
-                    routineId: req.body.routineId,
-                    routineLastCheckInDate: {
-                        [Sequelize.Op.ne]: null
-                    },
-                    [Sequelize.Op.and]: Sequelize.literal("DATEDIFF(CURRENT_TIMESTAMP, routineLastCheckInDate) < 1")
-                }
-            })
+            return _verifyRoutineOwnership(req.body.routineId, req.userId)
+                .then(() =>
+                    // Check if this routine has been checked in today already
+                    Routine.findOne({
+                        where: {
+                            routineId: req.body.routineId,
+                            routineLastCheckInDate: {
+                                [Sequelize.Op.ne]: null
+                            },
+                            [Sequelize.Op.and]: Sequelize.literal("DATEDIFF(CURRENT_TIMESTAMP, routineLastCheckInDate) < 1")
+                        }
+                    })
+                )
                 .then(result => {
                     if (!result) {
-                        sequelizeInstance.transaction(
+                        return sequelizeInstance.transaction(
                             t => Routine.update({
                                 routineConsecutive: Sequelize.literal("IF(DATEDIFF(CURRENT_TIMESTAMP, routineLastCheckInDate) = 1, routineConsecutive + 1, 1)"),
                                 routineLastCheckInDate: Sequelize.literal("CURRENT_TIMESTAMP")
@@ -194,30 +231,39 @@ module.exports = {
                                 .then(() => RoutineHistory.create({
                                     routineId: req.body.routineId
                                 }, {transaction: t}))
-                        )
-                            .then(() => {
-                                output.apiOutput(res, true);
-                            });
+                        );
                     } else {
-                        output.error(res, "This routine has already been checked in today.");
+                        return Promise.reject("This routine has already been checked in today.");
                     }
-                });
+                })
+                .then(() => {
+                    output.apiOutput(res, true);
+                })
+                .catch(error =>
+                    output.error(res, `Error checking in the Routine: ${error}`)
+                );
         } else {
             output.error(res, "Please provide the Routine ID.");
         }
     },
 
-    deleteRoutine (req, res) {
+    deleteRoutine: (req, res) => {
         if (req.body.routineId) {
-            Routine.update({
-                routineActive: false
-            }, {
-                where: {
-                    routineId: req.body.routineId
-                }
-            })
+            return _verifyRoutineOwnership(req.body.routineId, req.userId)
+                .then(() =>
+                    Routine.update({
+                        routineActive: false
+                    }, {
+                        where: {
+                            routineId: req.body.routineId
+                        }
+                    })
+                )
                 .then(() =>
                     output.apiOutput(res, true)
+                )
+                .catch(error =>
+                    output.error(res, `Error deleting the Routine: ${error}`)
                 );
         } else {
             output.error(res, "Please provide the Routine ID.");
