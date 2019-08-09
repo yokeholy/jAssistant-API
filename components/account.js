@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const output = require("../services/output");
 const sequelizeInstance = require("../database/models").database;
 
-const {user: User, loginSession: LoginSession} = require("../database/models");
+const {user: User, loginSession: LoginSession, settings: Settings, todoCategory: TodoCategory} = require("../database/models");
 
 module.exports = {
     login: (req, res) => {
@@ -63,7 +63,7 @@ module.exports = {
             return output.error(res, "Please provide Name, Email and Password to sign up.");
         } else {
             let authKey = md5(Date());
-            let registeredAccount;
+            let registeredUser;
             return sequelizeInstance.transaction(t =>
                 User.findOne({
                     attributes: ["userId"],
@@ -87,19 +87,45 @@ module.exports = {
                             userPassword: passwordHash
                         })
                     )
-                    .then(newAccount => {
-                        registeredAccount = newAccount;
-                        // User signed up, create a new session and return session auth key
-                        // Store the authentication key in LoginSession table
-                        return LoginSession.create({
-                            userId: newAccount.userId,
-                            authKey
-                        });
+                    .then(newUser => {
+                        registeredUser = newUser;
+                        // User signed up, populate default data
+                        // Default Settings
+                        return Settings.bulkCreate([
+                            {
+                                settingsName: "appName",
+                                settingsValue: "jAssistant",
+                                ownerId: registeredUser.userId
+                            }, {
+                                settingsName: "todoAlertLevel",
+                                settingsValue: "7",
+                                ownerId: registeredUser.userId
+                            }, {
+                                settingsName: "todoDangerLevel",
+                                settingsValue: "14",
+                                ownerId: registeredUser.userId
+                            }
+                        ]);
                     })
+                    .then(() =>
+                        // Default Todo Category
+                        TodoCategory.create({
+                            todoCategoryName: "Default",
+                            ownerId: registeredUser.userId
+                        })
+                    )
+                    .then(() =>
+                        // Create a new session and return session auth key
+                        // Store the authentication key in LoginSession table
+                        LoginSession.create({
+                            userId: registeredUser.userId,
+                            authKey
+                        })
+                    )
                     .then(() =>
                         output.apiOutput(res, {
                             authKey,
-                            userName: registeredAccount.userName
+                            userName: registeredUser.userName
                         })
                     )
             );
