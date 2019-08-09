@@ -1,3 +1,4 @@
+const log = require("pino")();
 const output = require("../services/output");
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../database/models").database;
@@ -6,13 +7,33 @@ const Content = require("../config/content");
 
 const {lifestyle: Lifestyle, lifestyleHistory: LifestyleHistory} = require("../database/models");
 
+const _verifyLifestyleOwnership = (lifestyleId, userId) =>
+    Lifestyle.findAll({
+        where: {
+            ownerId: userId,
+            lifestyleId
+        }
+    })
+        .then(data => {
+            if (data.length) {
+                return Promise.resolve();
+            } else {
+                return Promise.reject("You don't have permission of this Lifestyle.");
+            }
+        })
+        .catch(error => {
+            log.error(`User ${userId} doesn't own Lifestyle ${lifestyleId}: ${error}`);
+            return Promise.reject(error);
+        });
+
 module.exports = {
-    getLifestyle (req, res) {
+    getLifestyle: (req, res) => {
         let lifestyles = {};
         sequelizeInstance.transaction(t =>
             Lifestyle.findAll({
                 attributes: ["lifestyleId", "lifestyleName", "lifestyleCaption", "lifestyleDailyValue", "lifestyleIconName", "lifestyleColorName"],
                 where: {
+                    ownerId: req.userId,
                     lifestyleStatus: true
                 },
                 transaction: t,
@@ -41,24 +62,31 @@ module.exports = {
             });
     },
 
-    upLifestyle (req, res) {
+    upLifestyle: (req, res) => {
         if (req.body.lifestyleId) {
-            LifestyleHistory.create({
-                lifestyleId: req.body.lifestyleId
-            })
+            return _verifyLifestyleOwnership(req.body.lifestyleId, req.userId)
+                .then(() =>
+                    LifestyleHistory.create({
+                        lifestyleId: req.body.lifestyleId
+                    })
+                )
                 .then(data =>
                     output.apiOutput(res, data)
+                )
+                .catch(error =>
+                    output.error(res, `Error uppping the Lifestyle: ${error}`)
                 );
         } else {
             output.error(res, "Please provide Lifestyle Id.");
         }
     },
 
-    getLifestyleSettings (req, res) {
+    getLifestyleSettings: (req, res) => {
         let contentSettings = Content;
         sequelizeInstance.transaction(t =>
             Lifestyle.findAll({
                 where: {
+                    ownerId: req.userId,
                     lifestyleStatus: true
                 },
                 transaction: t,
@@ -73,25 +101,31 @@ module.exports = {
         );
     },
 
-    saveLifestyleSetting (req, res) {
+    saveLifestyleSetting: (req, res) => {
         if (req.body) {
-            const setting = req.body;
-            if (setting.lifestyleId) {
+            if (req.body.lifestyleId) {
                 req.body.lifestyleUpdatedDate = new Date();
-                // This is an exiting lifestyle item, update the setting instead of creating a new one
-                Lifestyle.update(req.body, {
-                    where: {
-                        lifestyleId: setting.lifestyleId
-                    }
-                })
+                return _verifyLifestyleOwnership(req.body.lifestyleId, req.userId)
+                    .then(() =>
+                    // This is an exiting lifestyle item, update the setting instead of creating a new one
+                        Lifestyle.update(req.body, {
+                            where: {
+                                lifestyleId: req.body.lifestyleId
+                            }
+                        })
+                    )
                     .then(data =>
                         output.apiOutput(res, data)
+                    )
+                    .catch(error =>
+                        output.error(res, `Error saving Lifestyle settings: ${error}`)
                     );
             } else {
                 // This is a new lifestyle item, create it
                 Lifestyle.create({
-                    lifestyleName: setting.lifestyleName,
-                    lifestyleDailyValue: setting.lifestyleDailyValue
+                    ownerId: req.userId,
+                    lifestyleName: req.body.lifestyleName,
+                    lifestyleDailyValue: req.body.lifestyleDailyValue
                 })
                     .then(data => {
                         output.apiOutput(res, data);
@@ -102,17 +136,23 @@ module.exports = {
         }
     },
 
-    deleteLifestyleSetting (req, res) {
+    deleteLifestyleSetting: (req, res) => {
         if (req.body.lifestyleId) {
-            Lifestyle.update({
-                lifestyleStatus: false
-            }, {
-                where: {
-                    lifestyleId: req.body.lifestyleId
-                }
-            })
+            return _verifyLifestyleOwnership(req.body.lifestyleId, req.userId)
+                .then(() =>
+                    Lifestyle.update({
+                        lifestyleStatus: false
+                    }, {
+                        where: {
+                            lifestyleId: req.body.lifestyleId
+                        }
+                    })
+                )
                 .then(() =>
                     output.apiOutput(res, true)
+                )
+                .catch(error =>
+                    output.error(res, `Error deleting Lifestyle: ${error}`)
                 );
         } else {
             output.error(res, "Please provide Lifestyle Settings data.");

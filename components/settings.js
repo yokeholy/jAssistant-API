@@ -1,3 +1,4 @@
+const log = require("pino")();
 const output = require("../services/output");
 const Sequelize = require("sequelize");
 const sequelizeInstance = require("../database/models").database;
@@ -8,11 +9,33 @@ const {
     todo: Todo
 } = require("../database/models");
 
+const _verifyTodoCategoryOwnership = (todoCategoryId, userId) =>
+    TodoCategory.findAll({
+        where: {
+            ownerId: userId,
+            todoCategoryId
+        }
+    })
+        .then(data => {
+            if (data.length) {
+                return Promise.resolve();
+            } else {
+                return Promise.reject("You don't have permission of this TodoCategory.");
+            }
+        })
+        .catch(error => {
+            log.error(`User ${userId} doesn't own TodoCategory ${todoCategoryId}: ${error}`);
+            return Promise.reject(error);
+        });
+
 module.exports = {
-    getAllSettings (req, res) {
+    getAllSettings: (req, res) => {
         let generalSettings;
         sequelizeInstance.transaction(t =>
             Settings.findAll({
+                where: {
+                    ownerId: req.userId
+                },
                 transaction: t,
                 raw: true
             })
@@ -21,12 +44,14 @@ module.exports = {
                     return TodoCategory.findAll({
                         attributes: ["*", [Sequelize.fn("COUNT", Sequelize.col("todo.TodoId")), "todoCount"]],
                         where: {
+                            ownerId: req.userId,
                             todoCategoryStatus: true
                         },
                         include: [{
                             model: Todo,
                             attributes: [],
                             where: {
+                                ownerId: req.userId,
                                 todoDone: false
                             },
                             required: false
@@ -45,43 +70,75 @@ module.exports = {
         );
     },
 
-    saveTodoCategorySetting (req, res) {
-        if (req.body) {
-            const setting = req.body;
-            if (setting.todoCategoryId) {
-                req.body.todoCategoryUpdatedDate = new Date();
-                // This is an exiting todoCategory item, update the setting instead of creating a new one
-                TodoCategory.update(req.body, {
+    saveGeneralSettings: (req, res) => {
+        if (req.body.length) {
+            Promise.all(req.body.map(settingItem =>
+                Settings.update({
+                    settingsValue: settingItem.settingsValue
+                }, {
                     where: {
-                        todoCategoryId: setting.todoCategoryId
+                        ownerId: req.userId,
+                        settingsName: settingItem.settingsName
                     }
                 })
+            ))
+                .then(data =>
+                    output.apiOutput(res, data)
+                )
+                .catch(error =>
+                    output.error(res, `Error saving the Settings: ${error}`)
+                );
+        } else {
+            return output.error(res, "Please provide Settings data.");
+        }
+    },
+
+    saveTodoCategorySetting: (req, res) => {
+        if (req.body) {
+            if (req.body.todoCategoryId) {
+                return _verifyTodoCategoryOwnership(req.body.todoCategoryId, req.userId)
+                    .then(() => {
+                        req.body.todoCategoryUpdatedDate = new Date();
+                        // This is an exiting todoCategory item, update the setting instead of creating a new one
+                        return TodoCategory.update(req.body, {
+                            where: {
+                                todoCategoryId: req.body.todoCategoryId
+                            }
+                        });
+                    })
                     .then(data =>
                         output.apiOutput(res, data)
+                    )
+                    .catch(error =>
+                        output.error(res, `Error updating Todo Category: ${error}`)
                     );
             } else {
                 // This is a new todoCategory item, create it
-                TodoCategory.create({
-                    todoCategoryName: setting.todoCategoryName
+                return TodoCategory.create({
+                    ownerId: req.userId,
+                    todoCategoryName: req.body.todoCategoryName
                 })
                     .then(data => {
                         output.apiOutput(res, data);
                     });
             }
         } else {
-            output.error(res, "Please provide Todo Category Settings data.");
+            return output.error(res, "Please provide Todo Category Settings data.");
         }
     },
 
-    deleteTodoCategorySetting (req, res) {
+    deleteTodoCategorySetting: (req, res) => {
         if (req.body.todoCategoryId) {
-            return Todo.count({
-                where: {
-                    todoCategoryId: req.body.todoCategoryId,
-                    todoDone: false
-                },
-                raw: 1
-            })
+            return _verifyTodoCategoryOwnership(req.body.todoCategoryId, req.userId)
+                .then(() =>
+                    Todo.count({
+                        where: {
+                            todoCategoryId: req.body.todoCategoryId,
+                            todoDone: false
+                        },
+                        raw: 1
+                    })
+                )
                 .then(todoCountData => {
                     if (todoCountData > 0) {
                         return output.error(res, "This Todo Category has more than 0 unfinished Todo items. Thus deleting it is not allowed.");
@@ -98,29 +155,12 @@ module.exports = {
                                 output.apiOutput(res, true)
                             );
                     }
-                });
-        } else {
-            return output.error(res, "Please provide Todo Category Settings data.");
-        }
-    },
-
-    saveGeneralSettings (req, res) {
-        if (req.body.length) {
-            const settings = req.body;
-            return Promise.all(settings.map(settingItem =>
-                Settings.update({
-                    settingsValue: settingItem.settingsValue
-                }, {
-                    where: {
-                        settingsName: settingItem.settingsName
-                    }
                 })
-            ))
-                .then(data =>
-                    output.apiOutput(res, data)
+                .catch(error =>
+                    output.error(res, `Error deleting Todo Category: ${error}`)
                 );
         } else {
-            return output.error(res, "Please provide Settings data.");
+            return output.error(res, "Please provide Todo Category Settings data.");
         }
     }
 };

@@ -7,11 +7,10 @@ const sequelizeInstance = require("../database/models").database;
 const {user: User, loginSession: LoginSession} = require("../database/models");
 
 module.exports = {
-    login (req, res) {
+    login: (req, res) => {
         // Validation of login input
         if (!req.body.accountEmail || !req.body.accountPassword) {
-            output.error(res, "Please provide account Email and Password to login.");
-            return;
+            return output.error(res, "Please provide account Email and Password to login.");
         } else {
             let userData;
             // Verify user's email
@@ -30,8 +29,7 @@ module.exports = {
                             return bcrypt.compare(req.body.accountPassword, userData.userPassword);
                         } else {
                             // User email could not be found
-                            output.authError(res, "Invalid Email or Password.");
-                            return;
+                            return output.authError(res, "Invalid Email or Password.");
                         }
                     })
                     .then(result => {
