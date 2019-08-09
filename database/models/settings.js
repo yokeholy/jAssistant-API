@@ -8,6 +8,11 @@ module.exports = function (QueryInterface, Sequelize) {
         settingsValue: {
             type: Sequelize.TEXT,
             allowNull: false
+        },
+        ownerId: {
+            type: Sequelize.INTEGER(10),
+            allowNull: false,
+            defaultValue: 1
         }
     }, {
         tableName: "settings",

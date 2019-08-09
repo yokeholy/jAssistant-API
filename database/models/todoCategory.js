@@ -6,6 +6,11 @@ module.exports = function (QueryInterface, Sequelize) {
             primaryKey: true,
             autoIncrement: true
         },
+        ownerId: {
+            type: Sequelize.INTEGER(10),
+            allowNull: false,
+            defaultValue: 1
+        },
         todoCategoryName: {
             type: Sequelize.TEXT,
             allowNull: false
