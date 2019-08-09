@@ -1,9 +1,14 @@
 module.exports = function (QueryInterface, Sequelize) {
     const settings = QueryInterface.define("settings", {
+        settingsId: {
+            type: Sequelize.INTEGER(10),
+            allowNull: false,
+            primaryKey: true,
+            autoIncrement: true
+        },
         settingsName: {
             type: Sequelize.STRING(100),
-            allowNull: false,
-            primaryKey: true
+            allowNull: false
         },
         settingsValue: {
             type: Sequelize.TEXT,
