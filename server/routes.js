@@ -11,7 +11,8 @@ const settings = require("../components/settings");
 module.exports = function (server) {
     // Account
     server
-        .post("/account/login", account.login);
+        .post("/account/login", account.login)
+        .post("/account/signUp", account.signUp);
 
     // TodoList
     server
