@@ -12,6 +12,7 @@ module.exports = function (server) {
     // Account
     server
         .post("/account/login", account.login)
+        .post("/account/logout", userAuthentication, account.logout)
         .post("/account/signUp", account.signUp)
         .get("/account/getAccount", userAuthentication, account.getAccount)
         .post("/account/updateAccount", userAuthentication, account.updateAccount)
