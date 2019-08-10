@@ -14,7 +14,8 @@ module.exports = function (server) {
         .post("/account/login", account.login)
         .post("/account/signUp", account.signUp)
         .get("/account/getAccount", userAuthentication, account.getAccount)
-        .post("/account/updateAccount", userAuthentication, account.updateAccount);
+        .post("/account/updateAccount", userAuthentication, account.updateAccount)
+        .post("/account/updatePassword", userAuthentication, account.updatePassword);
 
     // TodoList
     server

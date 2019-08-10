@@ -161,5 +161,23 @@ module.exports = {
                     userName: userData.userName,
                     accountEmail: userData.userEmail
                 })
+            ),
+
+    updatePassword: (req, res) =>
+        bcrypt.hash(req.body.newPassword, 10)
+            .then(passwordHash =>
+                User.update({
+                    userPassword: passwordHash
+                }, {
+                    where: {
+                        userId: req.userId
+                    }
+                })
+            )
+            .then(userData =>
+                output.apiOutput(res, {
+                    userName: userData.userName,
+                    accountEmail: userData.userEmail
+                })
             )
 };
