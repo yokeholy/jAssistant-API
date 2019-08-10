@@ -179,5 +179,8 @@ module.exports = {
                     userName: userData.userName,
                     accountEmail: userData.userEmail
                 })
-            )
+            ),
+
+    logout: (req, res) =>
+        output.apiOutput(res, true)
 };
