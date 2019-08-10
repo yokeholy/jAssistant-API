@@ -130,5 +130,36 @@ module.exports = {
                     )
             );
         }
-    }
+    },
+
+    getAccount: (req, res) =>
+        User.findOne({
+            attributes: ["userName", "userEmail"],
+            where: {
+                userId: req.userId
+            },
+            raw: true
+        })
+            .then(userData =>
+                output.apiOutput(res, {
+                    userName: userData.userName,
+                    accountEmail: userData.userEmail
+                })
+            ),
+
+    updateAccount: (req, res) =>
+        User.update({
+            userName: req.body.userName,
+            userEmail: req.body.accountEmail
+        }, {
+            where: {
+                userId: req.userId
+            }
+        })
+            .then(userData =>
+                output.apiOutput(res, {
+                    userName: userData.userName,
+                    accountEmail: userData.userEmail
+                })
+            )
 };
