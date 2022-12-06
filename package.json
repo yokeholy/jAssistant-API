@@ -12,10 +12,10 @@
     "license": "ISC",
     "dependencies": {
         "bcrypt": "^5.0.0",
-        "body-parser": "^1.19.0",
+        "body-parser": "^1.20.1",
         "cron": "^1.7.1",
         "csvtojson": "^2.0.10",
-        "express": "^4.17.1",
+        "express": "^4.18.2",
         "lodash": "^4.17.19",
         "md5": "^2.2.1",
         "moment": "^2.24.0",
